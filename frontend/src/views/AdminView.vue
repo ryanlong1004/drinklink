@@ -146,10 +146,9 @@ const handleImport = async (event) => {
     
     alert(
       `Import successful!\n` +
-      `Categories: ${response.data.imported_categories}\n` +
-      `Tags: ${response.data.imported_tags}\n` +
-      `Items: ${response.data.imported_items}\n` +
-      (response.data.errors.length > 0 ? `\nErrors: ${response.data.errors.join(', ')}` : '')
+      `Categories: ${response.data.categories_imported || 0}\n` +
+      `Tags: ${response.data.tags_imported || 0}\n` +
+      `Items: ${response.data.items_imported || 0}`
     )
     
     // Refresh current view
