@@ -16,7 +16,7 @@ export const useAdminStore = defineStore('admin', {
             try {
                 const response = await api.getItems({
                     published_only: false,
-                    page_size: 1000
+                    page_size: 100
                 })
                 this.items = response.data.items
             } catch (error) {
