@@ -109,8 +109,9 @@ const handleExport = async () => {
     exporting.value = true
     const response = await api.exportData()
     
-    // Create blob and download
-    const blob = new Blob([response.data], { type: 'application/json' })
+    // Create blob from JSON data and download
+    const jsonStr = JSON.stringify(response.data, null, 2)
+    const blob = new Blob([jsonStr], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url

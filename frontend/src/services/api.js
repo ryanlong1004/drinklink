@@ -139,7 +139,7 @@ export default {
 
     // Data export/import
     exportData() {
-        return api.get('/api/v1/data/export', { responseType: 'blob' })
+        return api.get('/api/v1/data/export')
     },
 
     importData(data) {
