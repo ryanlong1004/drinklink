@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: drinklink-db
+    environment:
+      POSTGRES_USER: drinklink
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+      POSTGRES_DB: drinklink
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U drinklink"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - drinklink
+
+  backend:
+    image: saltycatfish/drinklink-backend:latest
+    container_name: drinklink-backend
+    environment:
+      DATABASE_URL: postgresql://drinklink:${POSTGRES_PASSWORD:-change_me_in_production}@db:5432/drinklink
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-in-production}
+      ENVIRONMENT: production
+    depends_on:
+      - db
+    command: sh -c "sleep 10 && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    restart: unless-stopped
+    networks:
+      - drinklink
+
+  frontend:
+    image: saltycatfish/drinklink-frontend:latest
+    container_name: drinklink-frontend
+    ports:
+      - "3080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - drinklink
+
+networks:
+  drinklink:
+    driver: bridge
+
+volumes:
+  postgres_data:
