@@ -6,6 +6,9 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+# Build with empty VITE_API_URL so it uses relative paths for API calls
+ENV VITE_API_URL=""
 RUN npm run build
 
 # Production stage with nginx

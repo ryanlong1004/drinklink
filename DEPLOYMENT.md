@@ -3,54 +3,64 @@
 ## Quick Deploy with Docker
 
 ### Prerequisites
+
 - Docker and Docker Compose installed on your server
 - Domain name (optional, for HTTPS)
 
 ### Production Deployment
 
 1. **Pull the repository**:
+
 ```bash
 git clone git@github.com:ryanlong1004/drinklink.git
 cd drinklink
 ```
 
 2. **Create environment file**:
+
 ```bash
 cp .env.example .env
 ```
 
 3. **Edit `.env` with your production values**:
+
 ```bash
 nano .env
 ```
 
 Required variables:
+
 ```env
 POSTGRES_PASSWORD=your_strong_password_here
 SECRET_KEY=your_secret_key_here
 ```
 
 Generate a secure SECRET_KEY:
+
 ```bash
 openssl rand -hex 32
 ```
 
 4. **Start the application**:
+
 ```bash
 docker compose -f docker-compose.prod.yml up -d
 ```
 
 5. **Run database migrations**:
+
 ```bash
 docker compose -f docker-compose.prod.yml exec backend alembic upgrade head
 ```
 
 6. **Access the application**:
+
 - Frontend: http://your-server-ip
 - Backend API: http://your-server-ip/api (proxied through nginx)
 - API Docs: http://your-server-ip/api/docs
 
 ### Default Admin Credentials
+
 ```
 Username: admin
 Password: change-me-in-production
@@ -87,11 +97,13 @@ docker compose -f docker-compose.prod.yml exec backend alembic upgrade head
 For production use with HTTPS, you can:
 
 1. **Use a reverse proxy** (recommended):
+
    - nginx with Let's Encrypt
    - Caddy (auto-HTTPS)
    - Traefik
 
 2. **Example nginx config**:
+
 ```nginx
 server {
     listen 80;
@@ -131,6 +143,7 @@ cat backup_20250119.sql | docker compose -f docker-compose.prod.yml exec -T db p
 ## Monitoring
 
 View logs:
+
 ```bash
 # All services
 docker compose -f docker-compose.prod.yml logs -f
@@ -140,6 +153,7 @@ docker compose -f docker-compose.prod.yml logs -f backend
 ```
 
 Check service status:
+
 ```bash
 docker compose -f docker-compose.prod.yml ps
 ```
@@ -147,16 +161,19 @@ docker compose -f docker-compose.prod.yml ps
 ## Troubleshooting
 
 ### Backend won't start
+
 - Check DATABASE_URL is correct
 - Verify database is healthy: `docker compose -f docker-compose.prod.yml ps`
 - Check logs: `docker compose -f docker-compose.prod.yml logs backend`
 
 ### Frontend shows connection errors
+
 - Ensure backend is running
 - Check nginx configuration
 - Verify API URL in browser console
 
 ### Database connection issues
+
 - Wait for database health check to pass
 - Verify POSTGRES_PASSWORD matches in both services
 - Check network connectivity between containers
@@ -177,11 +194,13 @@ docker compose -f docker-compose.prod.yml ps
 For production workloads, consider:
 
 1. **Database optimization**:
+
    - Increase PostgreSQL memory settings
    - Add database connection pooling
    - Enable query logging for slow queries
 
 2. **Frontend caching**:
+
    - Configure nginx caching headers
    - Use CDN for static assets
 
@@ -193,5 +212,6 @@ For production workloads, consider:
 ## Support
 
 For issues or questions:
+
 - GitHub Issues: https://github.com/ryanlong1004/drinklink/issues
 - Documentation: https://github.com/ryanlong1004/drinklink
