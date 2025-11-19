@@ -13,34 +13,65 @@
         :key="category.id"
         class="card"
       >
-        <h3 class="text-lg font-semibold mb-2">{{ category.name }}</h3>
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="text-lg font-semibold">{{ category.name }}</h3>
+          <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+            Order: {{ category.sort_order }}
+          </span>
+        </div>
+        <p class="text-xs text-gray-500 mb-2 font-mono">{{ category.slug }}</p>
         <p class="text-sm text-gray-600 mb-3">{{ category.description || 'No description' }}</p>
         <div class="flex gap-2">
-          <button class="text-sm text-primary-600 hover:text-primary-900">Edit</button>
-          <button class="text-sm text-red-600 hover:text-red-900">Delete</button>
+          <button @click="editCategory(category)" class="text-sm text-primary-600 hover:text-primary-900">
+            Edit
+          </button>
+          <button @click="deleteCategory(category)" class="text-sm text-red-600 hover:text-red-900">
+            Delete
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Modal placeholder -->
-    <div v-if="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg max-w-md w-full p-6">
-        <h3 class="text-xl font-bold mb-4">Create Category</h3>
-        <p class="text-gray-600 mb-4">Category form would go here</p>
-        <button @click="showCreateModal = false" class="btn btn-secondary">Close</button>
-      </div>
-    </div>
+    <!-- Category Form Modal -->
+    <CategoryForm
+      v-if="showCreateModal"
+      :category="editingCategory"
+      @close="closeModal"
+      @saved="handleSaved"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAdminStore } from '../../stores/admin'
+import CategoryForm from './CategoryForm.vue'
 
 const adminStore = useAdminStore()
 const showCreateModal = ref(false)
+const editingCategory = ref(null)
 
 onMounted(() => {
   adminStore.fetchCategories()
 })
+
+const editCategory = (category) => {
+  editingCategory.value = category
+  showCreateModal.value = true
+}
+
+const deleteCategory = async (category) => {
+  if (confirm(`Delete "${category.name}"? This will also remove this category from all items.`)) {
+    await adminStore.deleteCategory(category.id)
+  }
+}
+
+const closeModal = () => {
+  showCreateModal.value = false
+  editingCategory.value = null
+}
+
+const handleSaved = () => {
+  console.log('Category saved successfully')
+}
 </script>

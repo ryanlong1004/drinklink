@@ -111,6 +111,28 @@ export const useAdminStore = defineStore('admin', {
                 console.error('Error creating category:', error)
                 return false
             }
+        },
+
+        async updateCategory(id, data) {
+            try {
+                await api.updateCategory(id, data)
+                await this.fetchCategories()
+                return true
+            } catch (error) {
+                console.error('Error updating category:', error)
+                return false
+            }
+        },
+
+        async deleteCategory(id) {
+            try {
+                await api.deleteCategory(id)
+                await this.fetchCategories()
+                return true
+            } catch (error) {
+                console.error('Error deleting category:', error)
+                return false
+            }
         }
     }
 })
