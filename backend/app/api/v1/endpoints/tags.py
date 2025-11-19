@@ -119,14 +119,17 @@ async def auto_generate_tags(
     """
     Auto-generate tags from all items in the database.
     Analyzes item names, descriptions, ABV, and origins to suggest tags.
-    Creates tags that don't already exist.
+    Creates tags that don't already exist and assigns them to the items
+    they were found on.
     Admin only.
     """
     # Get all items
     items = db.query(Item).all()
     
-    # Collect all suggested tag names
+    # Collect suggested tags per item
+    item_suggestions = {}  # {item_id: [tag_names]}
     all_suggested_tags = set()
+    
     for item in items:
         suggested = TagSuggestionService.suggest_tags_from_item(
             name=item.name,
@@ -134,10 +137,11 @@ async def auto_generate_tags(
             abv=item.abv,
             origin=item.origin
         )
+        item_suggestions[item.id] = suggested
         all_suggested_tags.update(suggested)
     
     # Get existing tags
-    existing_tags = {tag.name.lower() for tag in db.query(Tag).all()}
+    existing_tags_dict = {tag.name.lower(): tag for tag in db.query(Tag).all()}
     
     # Color mapping for different tag types
     color_map = {
@@ -157,7 +161,7 @@ async def auto_generate_tags(
     # Create new tags
     created_tags = []
     for tag_name in all_suggested_tags:
-        if tag_name.lower() not in existing_tags:
+        if tag_name.lower() not in existing_tags_dict:
             # Generate slug
             slug = tag_name.lower().replace(" ", "-")
             
@@ -174,13 +178,40 @@ async def auto_generate_tags(
                 color=color
             )
             db.add(tag)
+            db.flush()  # Flush to get the tag ID
+            existing_tags_dict[tag_name.lower()] = tag
             created_tags.append(tag_name.title())
+    
+    # Now assign tags to items
+    items_updated = 0
+    for item in items:
+        if item.id in item_suggestions:
+            suggested_tag_names = item_suggestions[item.id]
+            
+            # Get current tag IDs for this item
+            current_tag_ids = {tag.id for tag in item.tags}
+            
+            # Find tags to add
+            tags_to_add = []
+            for tag_name in suggested_tag_names:
+                tag = existing_tags_dict.get(tag_name.lower())
+                if tag and tag.id not in current_tag_ids:
+                    tags_to_add.append(tag)
+            
+            # Add new tags to item
+            if tags_to_add:
+                item.tags.extend(tags_to_add)
+                items_updated += 1
     
     db.commit()
     
+    msg = f"Successfully created {len(created_tags)} new tags"
+    msg += f" and updated {items_updated} items"
+    
     return {
-        "message": f"Successfully created {len(created_tags)} new tags",
+        "message": msg,
         "created_tags": created_tags,
+        "items_updated": items_updated,
         "total_suggested": len(all_suggested_tags),
         "already_existed": len(all_suggested_tags) - len(created_tags)
     }

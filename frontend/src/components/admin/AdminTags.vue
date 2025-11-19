@@ -26,8 +26,9 @@
     <div v-if="autoGenMessage" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
       <p class="text-green-800 font-medium">{{ autoGenMessage }}</p>
       <p v-if="autoGenDetails" class="text-sm text-green-700 mt-1">
-        Created {{ autoGenDetails.created_tags?.length || 0 }} new tags
-        ({{ autoGenDetails.already_existed }} already existed)
+        Created {{ autoGenDetails.created_tags?.length || 0 }} new tags • 
+        Updated {{ autoGenDetails.items_updated || 0 }} items • 
+        {{ autoGenDetails.already_existed }} already existed
       </p>
     </div>
 
@@ -78,7 +79,7 @@ onMounted(() => {
 })
 
 const handleAutoGenerate = async () => {
-  if (!confirm('Auto-generate tags from all items? This will analyze item descriptions and create new tags.')) {
+  if (!confirm('Auto-generate tags from all items? This will analyze item descriptions, create new tags, and assign them to the relevant items.')) {
     return
   }
   
@@ -91,6 +92,9 @@ const handleAutoGenerate = async () => {
     if (result) {
       autoGenMessage.value = result.message
       autoGenDetails.value = result
+      
+      // Refresh items list since tags were assigned
+      await adminStore.fetchAllItems()
       
       // Clear message after 5 seconds
       setTimeout(() => {
