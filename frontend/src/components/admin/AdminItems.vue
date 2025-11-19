@@ -11,6 +11,14 @@
       <p>Loading...</p>
     </div>
 
+    <div v-else-if="adminStore.error" class="text-center py-12">
+      <p class="text-red-600">Error: {{ adminStore.error }}</p>
+    </div>
+
+    <div v-else-if="adminStore.items.length === 0" class="text-center py-12">
+      <p class="text-gray-600">No items found. Add your first item!</p>
+    </div>
+
     <div v-else class="bg-white rounded-lg shadow overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
@@ -74,10 +82,13 @@ const adminStore = useAdminStore()
 const showCreateModal = ref(false)
 const editingItem = ref(null)
 
-onMounted(() => {
-  adminStore.fetchAllItems()
-  adminStore.fetchCategories()
-  adminStore.fetchTags()
+onMounted(async () => {
+  console.log('AdminItems mounted, fetching data...')
+  await adminStore.fetchAllItems()
+  await adminStore.fetchCategories()
+  await adminStore.fetchTags()
+  console.log('Items loaded:', adminStore.items.length)
+  console.log('Items:', adminStore.items)
 })
 
 const togglePublish = async (item) => {
