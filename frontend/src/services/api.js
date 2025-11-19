@@ -11,8 +11,8 @@ const api = axios.create({
             Object.keys(params).forEach(key => {
                 if (params[key] !== null && params[key] !== undefined) {
                     // Convert boolean to lowercase string for FastAPI
-                    const value = typeof params[key] === 'boolean' 
-                        ? params[key].toString().toLowerCase() 
+                    const value = typeof params[key] === 'boolean'
+                        ? params[key].toString().toLowerCase()
                         : params[key]
                     searchParams.append(key, value)
                 }

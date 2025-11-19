@@ -63,20 +63,20 @@
       </table>
     </div>
 
-    <!-- Create/Edit Modal would go here -->
-    <div v-if="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-        <h3 class="text-xl font-bold mb-4">{{ editingItem ? 'Edit Item' : 'Create Item' }}</h3>
-        <p class="text-gray-600 mb-4">Item form would go here with all fields</p>
-        <button @click="showCreateModal = false" class="btn btn-secondary">Close</button>
-      </div>
-    </div>
+    <!-- Create/Edit Modal -->
+    <ItemForm
+      v-if="showCreateModal"
+      :item="editingItem"
+      @close="closeModal"
+      @saved="handleSaved"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAdminStore } from '../../stores/admin'
+import ItemForm from './ItemForm.vue'
 
 const adminStore = useAdminStore()
 const showCreateModal = ref(false)
@@ -106,5 +106,15 @@ const deleteItem = async (item) => {
   if (confirm(`Delete "${item.name}"?`)) {
     await adminStore.deleteItem(item.id)
   }
+}
+
+const closeModal = () => {
+  showCreateModal.value = false
+  editingItem.value = null
+}
+
+const handleSaved = () => {
+  // Modal will close itself via @close event
+  console.log('Item saved successfully')
 }
 </script>
