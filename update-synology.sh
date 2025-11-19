@@ -8,9 +8,10 @@ echo ""
 echo "1. Stopping containers..."
 docker compose -f docker-compose.synology.yml down
 
-# Remove old frontend image to force pull
-echo "2. Removing old frontend image..."
-docker rmi saltycatfish/drinklink-frontend:latest 2>/dev/null || echo "  (Image not found or already removed)"
+# Remove old images to force pull
+echo "2. Removing old images..."
+docker rmi saltycatfish/drinklink-frontend:latest 2>/dev/null || echo "  (Frontend image not found or already removed)"
+docker rmi saltycatfish/drinklink-backend:latest 2>/dev/null || echo "  (Backend image not found or already removed)"
 
 # Pull latest images
 echo "3. Pulling latest images..."
