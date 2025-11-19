@@ -26,6 +26,8 @@ services:
       DATABASE_URL: postgresql://drinklink:${POSTGRES_PASSWORD:-change_me_in_production}@db:5432/drinklink
       SECRET_KEY: ${SECRET_KEY:-dev-secret-change-in-production}
       ENVIRONMENT: production
+    ports:
+      - "8000:8000"
     depends_on:
       - db
     command: sh -c "sleep 10 && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
