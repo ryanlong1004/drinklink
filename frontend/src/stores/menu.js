@@ -6,11 +6,13 @@ export const useMenuStore = defineStore('menu', {
         items: [],
         categories: [],
         tags: [],
+        origins: [],
         loading: false,
         error: null,
         filters: {
             categoryId: null,
             tagIds: [],
+            origin: null,
             search: '',
             sortBy: 'name',
             sortOrder: 'asc'
@@ -42,6 +44,7 @@ export const useMenuStore = defineStore('menu', {
                     page_size: this.pagination.pageSize,
                     category_id: this.filters.categoryId,
                     tag_ids: this.filters.tagIds.join(','),
+                    origin: this.filters.origin,
                     search: this.filters.search,
                     sort_by: this.filters.sortBy,
                     sort_order: this.filters.sortOrder,
@@ -78,6 +81,15 @@ export const useMenuStore = defineStore('menu', {
             }
         },
 
+        async fetchOrigins() {
+            try {
+                const response = await api.getOrigins()
+                this.origins = response.data.origins
+            } catch (error) {
+                console.error('Error fetching origins:', error)
+            }
+        },
+
         setFilter(key, value) {
             this.filters[key] = value
             this.pagination.page = 1
@@ -99,6 +111,7 @@ export const useMenuStore = defineStore('menu', {
             this.filters = {
                 categoryId: null,
                 tagIds: [],
+                origin: null,
                 search: '',
                 sortBy: 'name',
                 sortOrder: 'asc'

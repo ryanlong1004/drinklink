@@ -83,6 +83,10 @@ export default {
         return api.post('/api/v1/items/suggest-tags', null, { params })
     },
 
+    getOrigins() {
+        return api.get('/api/v1/items/origins/list')
+    },
+
     // Categories
     getCategories() {
         return api.get('/api/v1/categories')

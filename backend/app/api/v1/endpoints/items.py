@@ -18,6 +18,7 @@ async def get_items(
     page_size: int = Query(20, ge=1, le=100),
     category_id: Optional[int] = None,
     tag_ids: Optional[str] = None,  # Comma-separated tag IDs
+    origin: Optional[str] = None,
     search: Optional[str] = None,
     sort_by: str = Query("name", regex="^(name|price|abv|created_at)$"),
     sort_order: str = Query("asc", regex="^(asc|desc)$"),
@@ -43,6 +44,10 @@ async def get_items(
         tag_id_list = [int(tid) for tid in tag_ids.split(",") if tid.strip()]
         for tag_id in tag_id_list:
             query = query.filter(Item.tags.any(Tag.id == tag_id))
+
+    # Filter by origin
+    if origin:
+        query = query.filter(Item.origin.ilike(f"%{origin}%"))
 
     # Search in name, description, producer
     if search:
@@ -189,3 +194,26 @@ async def suggest_tags(
         "suggested_tag_names": list(suggested_names),
         "existing_tags": suggested_tags,
     }
+
+
+@router.get("/origins/list")
+async def get_origins(db: Session = Depends(get_db)):
+    """
+    Get list of unique origins from all published items.
+    Public endpoint.
+    """
+    # Get all distinct origins from published items
+    origins = (
+        db.query(Item.origin)
+        .filter(Item.is_published.is_(True))
+        .filter(Item.origin.isnot(None))
+        .filter(Item.origin != "")
+        .distinct()
+        .order_by(Item.origin)
+        .all()
+    )
+
+    # Extract just the origin strings from tuples
+    origin_list = [origin[0] for origin in origins if origin[0]]
+
+    return {"origins": origin_list}

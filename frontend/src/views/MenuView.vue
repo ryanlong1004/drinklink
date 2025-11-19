@@ -66,6 +66,7 @@ const selectedItem = ref(null)
 onMounted(async () => {
   await menuStore.fetchCategories()
   await menuStore.fetchTags()
+  await menuStore.fetchOrigins()
   await menuStore.fetchItems()
 })
 </script>

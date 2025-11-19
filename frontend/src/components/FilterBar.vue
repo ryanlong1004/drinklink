@@ -80,6 +80,37 @@
       </div>
     </div>
 
+    <!-- Origins -->
+    <div v-if="menuStore.origins.length > 0">
+      <h3 class="font-semibold mb-3">Filter by Origin</h3>
+      <div class="flex flex-wrap gap-2">
+        <button
+          @click="menuStore.setFilter('origin', null)"
+          :class="[
+            'tag-chip',
+            menuStore.filters.origin === null
+              ? 'tag-chip-active'
+              : 'tag-chip-inactive'
+          ]"
+        >
+          All
+        </button>
+        <button
+          v-for="origin in menuStore.origins"
+          :key="origin"
+          @click="menuStore.setFilter('origin', origin)"
+          :class="[
+            'tag-chip',
+            menuStore.filters.origin === origin
+              ? 'tag-chip-active'
+              : 'tag-chip-inactive'
+          ]"
+        >
+          {{ origin }}
+        </button>
+      </div>
+    </div>
+
     <!-- Sort Options -->
     <div class="flex items-center gap-4 flex-wrap">
       <div class="flex items-center gap-2">
@@ -143,6 +174,7 @@ const hasActiveFilters = computed(() => {
   return (
     menuStore.filters.categoryId !== null ||
     menuStore.filters.tagIds.length > 0 ||
+    menuStore.filters.origin !== null ||
     menuStore.filters.search !== ''
   )
 })
