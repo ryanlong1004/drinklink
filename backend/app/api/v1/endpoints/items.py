@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from typing import List, Optional
+from typing import Optional
 from app.core.database import get_db
-from app.models import Item, Category, Tag
+from app.models import Item, Tag
 from app.schemas.item import ItemResponse, ItemCreate, ItemUpdate, ItemListResponse
 from app.api.v1.endpoints.auth import get_current_user
 from app.services.tag_suggestion import TagSuggestionService
+from app.services.drink_search import DrinkDatabaseService
 from math import ceil
 
 router = APIRouter()
@@ -80,6 +81,20 @@ async def get_items(
         "page_size": page_size,
         "pages": ceil(total / page_size) if total > 0 else 0,
     }
+
+
+@router.get("/search-database")
+async def search_drink_database(
+    q: str = Query(..., min_length=2),
+    current_user: str = Depends(get_current_user),  # noqa: ARG001
+):
+    """
+    Search external drink database for items to add.
+    Returns structured data that can be used to create new items.
+    Admin only.
+    """
+    results = await DrinkDatabaseService.search_drinks(q)
+    return {"results": results, "total": len(results)}
 
 
 @router.get("/{item_id}", response_model=ItemResponse)

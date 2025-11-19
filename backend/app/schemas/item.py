@@ -8,6 +8,7 @@ class CategoryBase(BaseModel):
     name: str = Field(..., max_length=50)
     slug: str = Field(..., max_length=50)
     description: Optional[str] = None
+    icon: Optional[str] = Field(None, max_length=10)
     sort_order: int = 0
 
 
@@ -19,6 +20,7 @@ class CategoryUpdate(BaseModel):
     name: Optional[str] = Field(None, max_length=50)
     slug: Optional[str] = Field(None, max_length=50)
     description: Optional[str] = None
+    icon: Optional[str] = Field(None, max_length=10)
     sort_order: Optional[int] = None
 
 

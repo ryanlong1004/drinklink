@@ -87,6 +87,10 @@ export default {
         return api.get('/api/v1/items/origins/list')
     },
 
+    searchDrinkDatabase(query) {
+        return api.get('/api/v1/items/search-database', { params: { q: query } })
+    },
+
     // Categories
     getCategories() {
         return api.get('/api/v1/categories')

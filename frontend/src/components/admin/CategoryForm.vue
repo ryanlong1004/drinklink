@@ -47,6 +47,41 @@
           </p>
         </div>
 
+        <!-- Icon Picker -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Icon
+            <span class="text-xs text-gray-500 font-normal ml-2">Select an emoji icon</span>
+          </label>
+          <div class="grid grid-cols-8 gap-2">
+            <button
+              v-for="icon in availableIcons"
+              :key="icon"
+              type="button"
+              @click="form.icon = icon"
+              :class="[
+                'text-3xl p-3 rounded-lg border-2 transition-all hover:scale-110',
+                form.icon === icon 
+                  ? 'border-primary-500 bg-primary-50' 
+                  : 'border-gray-200 hover:border-gray-300'
+              ]"
+            >
+              {{ icon }}
+            </button>
+          </div>
+          <div v-if="form.icon" class="mt-2 flex items-center gap-2 text-sm text-gray-600">
+            <span>Selected:</span>
+            <span class="text-2xl">{{ form.icon }}</span>
+            <button 
+              type="button"
+              @click="form.icon = null" 
+              class="text-xs text-red-600 hover:text-red-800"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+
         <!-- Description -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -111,6 +146,26 @@ const adminStore = useAdminStore()
 const submitting = ref(false)
 const slugManuallyEdited = ref(false)
 
+const availableIcons = [
+  '🍺', // Beer mug
+  '🍻', // Clinking beer mugs
+  '🍶', // Sake bottle (beer bottle)
+  '🥃', // Tumbler glass (can represent bottled drinks)
+  '🍷', // Wine glass
+  '🥫', // Can
+  '🍸', // Cocktail glass
+  '🍹', // Tropical drink
+  '🥂', // Clinking glasses
+  '🧃', // Juice box
+  '🧋', // Bubble tea
+  '☕', // Coffee
+  '🍵', // Tea
+  '🥤', // Cup with straw
+  '🧊', // Ice cube
+  '🍇', // Grapes
+  '🍾', // Champagne bottle (alternative)
+]
+
 const isEditing = computed(() => !!props.category)
 
 // Initialize form
@@ -118,6 +173,7 @@ const form = ref({
   name: '',
   slug: '',
   description: '',
+  icon: null,
   sort_order: 0
 })
 
@@ -127,6 +183,7 @@ if (props.category) {
     name: props.category.name,
     slug: props.category.slug,
     description: props.category.description || '',
+    icon: props.category.icon || null,
     sort_order: props.category.sort_order
   }
   // When editing, slug is already set, so mark as manually edited

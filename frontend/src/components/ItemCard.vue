@@ -1,7 +1,10 @@
 <template>
   <div class="card hover:shadow-lg transition-shadow cursor-pointer">
     <div class="flex justify-between items-start mb-3">
-      <h3 class="text-xl font-semibold text-gray-900">{{ item.name }}</h3>
+      <div class="flex items-center gap-2 flex-1">
+        <span class="text-2xl">{{ item.category?.icon || getCategoryIcon(item.category?.name) }}</span>
+        <h3 class="text-xl font-semibold text-gray-900">{{ item.name }}</h3>
+      </div>
       <span class="text-lg font-bold text-primary-600">${{ item.price.toFixed(2) }}</span>
     </div>
 
@@ -49,4 +52,28 @@ defineProps({
     required: true
   }
 })
+
+const getCategoryIcon = (categoryName) => {
+  if (!categoryName) return '🍺'
+  
+  const name = categoryName.toLowerCase()
+  
+  if (name.includes('draft') || name.includes('tap')) {
+    return '🍺' // Draft beer mug
+  } else if (name.includes('seltzer') || name.includes('seltzer')) {
+    return '🥫' // Can for hard seltzers
+  } else if (name.includes('bottle')) {
+    return '🍾' // Bottle
+  } else if (name.includes('wine')) {
+    return '🍷' // Wine glass
+  } else if (name.includes('cocktail') || name.includes('mixed')) {
+    return '🍸' // Cocktail
+  } else if (name.includes('spirit') || name.includes('liquor')) {
+    return '🥃' // Whiskey glass
+  } else if (name.includes('cider')) {
+    return '🍺' // Beer mug (for cider)
+  } else {
+    return '🍺' // Default to beer mug
+  }
+}
 </script>

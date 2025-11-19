@@ -2,9 +2,14 @@
   <div>
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold">Menu Items</h2>
-      <button @click="showCreateModal = true" class="btn btn-primary">
-        + Add Item
-      </button>
+      <div class="flex gap-2">
+        <button @click="showSearchModal = true" class="btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+          🔍 Search Database
+        </button>
+        <button @click="showCreateModal = true" class="btn btn-primary">
+          + Add Item
+        </button>
+      </div>
     </div>
 
     <div v-if="adminStore.loading" class="text-center py-12">
@@ -70,6 +75,13 @@
       @close="closeModal"
       @saved="handleSaved"
     />
+
+    <!-- Search Modal -->
+    <ItemSearch
+      v-if="showSearchModal"
+      @close="showSearchModal = false"
+      @item-selected="handleItemSelected"
+    />
   </div>
 </template>
 
@@ -77,9 +89,11 @@
 import { ref, onMounted } from 'vue'
 import { useAdminStore } from '../../stores/admin'
 import ItemForm from './ItemForm.vue'
+import ItemSearch from './ItemSearch.vue'
 
 const adminStore = useAdminStore()
 const showCreateModal = ref(false)
+const showSearchModal = ref(false)
 const editingItem = ref(null)
 
 onMounted(async () => {
@@ -116,5 +130,12 @@ const closeModal = () => {
 const handleSaved = () => {
   // Modal will close itself via @close event
   console.log('Item saved successfully')
+}
+
+const handleItemSelected = (itemData) => {
+  console.log('Item selected from search:', itemData)
+  showSearchModal.value = false
+  editingItem.value = itemData
+  showCreateModal.value = true
 }
 </script>

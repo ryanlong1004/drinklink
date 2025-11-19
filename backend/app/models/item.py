@@ -33,6 +33,7 @@ class Category(Base):
     name = Column(String(50), unique=True, nullable=False, index=True)
     slug = Column(String(50), unique=True, nullable=False, index=True)
     description = Column(Text)
+    icon = Column(String(10))  # Emoji icon for the category
     sort_order = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

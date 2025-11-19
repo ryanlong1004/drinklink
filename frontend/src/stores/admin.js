@@ -144,6 +144,16 @@ export const useAdminStore = defineStore('admin', {
                 console.error('Error auto-generating tags:', error)
                 return null
             }
+        },
+
+        async searchDrinkDatabase(query) {
+            try {
+                const response = await api.searchDrinkDatabase(query)
+                return response.data.results
+            } catch (error) {
+                console.error('Error searching drink database:', error)
+                return []
+            }
         }
     }
 })
