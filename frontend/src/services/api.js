@@ -135,5 +135,14 @@ export default {
 
     autoGenerateTags() {
         return api.post('/api/v1/tags/auto-generate')
+    },
+
+    // Data export/import
+    exportData() {
+        return api.get('/api/v1/data/export', { responseType: 'blob' })
+    },
+
+    importData(data) {
+        return api.post('/api/v1/data/import', data)
     }
 }

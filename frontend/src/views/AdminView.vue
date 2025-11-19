@@ -7,6 +7,13 @@
           <h1 class="text-2xl font-bold text-primary-600">DrinkLink Admin</h1>
         </div>
         <div class="flex items-center gap-4">
+          <button @click="handleExport" class="btn btn-primary" :disabled="exporting">
+            {{ exporting ? 'Exporting...' : 'Export Data' }}
+          </button>
+          <label class="btn btn-primary cursor-pointer">
+            <input type="file" @change="handleImport" accept=".json" class="hidden" :disabled="importing">
+            {{ importing ? 'Importing...' : 'Import Data' }}
+          </label>
           <router-link to="/" class="text-gray-600 hover:text-gray-900">
             View Menu
           </router-link>
@@ -73,12 +80,15 @@ import { useAdminStore } from '../stores/admin'
 import AdminItems from '../components/admin/AdminItems.vue'
 import AdminCategories from '../components/admin/AdminCategories.vue'
 import AdminTags from '../components/admin/AdminTags.vue'
+import api from '../services/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const adminStore = useAdminStore()
 
 const activeTab = ref('items')
+const exporting = ref(false)
+const importing = ref(false)
 
 const currentTabComponent = computed(() => {
   const components = {
@@ -92,6 +102,70 @@ const currentTabComponent = computed(() => {
 const handleLogout = () => {
   authStore.logout()
   router.push('/login')
+}
+
+const handleExport = async () => {
+  try {
+    exporting.value = true
+    const response = await api.exportData()
+    
+    // Create blob and download
+    const blob = new Blob([response.data], { type: 'application/json' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `drinklink-data-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    alert('Data exported successfully!')
+  } catch (error) {
+    console.error('Export failed:', error)
+    alert('Failed to export data: ' + (error.response?.data?.detail || error.message))
+  } finally {
+    exporting.value = false
+  }
+}
+
+const handleImport = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  
+  try {
+    importing.value = true
+    
+    // Read file
+    const text = await file.text()
+    const data = JSON.parse(text)
+    
+    // Import data
+    const response = await api.importData(data)
+    
+    alert(
+      `Import successful!\n` +
+      `Categories: ${response.data.imported_categories}\n` +
+      `Tags: ${response.data.imported_tags}\n` +
+      `Items: ${response.data.imported_items}\n` +
+      (response.data.errors.length > 0 ? `\nErrors: ${response.data.errors.join(', ')}` : '')
+    )
+    
+    // Refresh current view
+    if (activeTab.value === 'items') {
+      await adminStore.loadItems()
+    } else if (activeTab.value === 'categories') {
+      await adminStore.loadCategories()
+    } else if (activeTab.value === 'tags') {
+      await adminStore.loadTags()
+    }
+  } catch (error) {
+    console.error('Import failed:', error)
+    alert('Failed to import data: ' + (error.response?.data?.detail || error.message))
+  } finally {
+    importing.value = false
+    event.target.value = '' // Reset file input
+  }
 }
 
 onMounted(async () => {

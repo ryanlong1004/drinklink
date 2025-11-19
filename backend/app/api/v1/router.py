@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import items, categories, tags, auth
+from app.api.v1.endpoints import items, categories, tags, auth, data
 
 api_router = APIRouter()
 
@@ -10,3 +10,6 @@ api_router.include_router(tags.router, prefix="/tags", tags=["tags"])
 
 # Auth endpoints
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+
+# Admin endpoints
+api_router.include_router(data.router, prefix="/data", tags=["data"])
