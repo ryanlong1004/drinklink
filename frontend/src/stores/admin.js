@@ -133,6 +133,17 @@ export const useAdminStore = defineStore('admin', {
                 console.error('Error deleting category:', error)
                 return false
             }
+        },
+
+        async autoGenerateTags() {
+            try {
+                const response = await api.autoGenerateTags()
+                await this.fetchTags()
+                return response.data
+            } catch (error) {
+                console.error('Error auto-generating tags:', error)
+                return null
+            }
         }
     }
 })

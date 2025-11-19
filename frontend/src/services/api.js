@@ -123,5 +123,9 @@ export default {
 
     deleteTag(id) {
         return api.delete(`/api/v1/tags/${id}`)
+    },
+
+    autoGenerateTags() {
+        return api.post('/api/v1/tags/auto-generate')
     }
 }
