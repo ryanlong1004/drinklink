@@ -10,7 +10,11 @@ const api = axios.create({
             const searchParams = new URLSearchParams()
             Object.keys(params).forEach(key => {
                 if (params[key] !== null && params[key] !== undefined) {
-                    searchParams.append(key, params[key])
+                    // Convert boolean to lowercase string for FastAPI
+                    const value = typeof params[key] === 'boolean' 
+                        ? params[key].toString().toLowerCase() 
+                        : params[key]
+                    searchParams.append(key, value)
                 }
             })
             return searchParams.toString()
