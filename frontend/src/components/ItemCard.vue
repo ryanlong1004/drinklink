@@ -7,13 +7,13 @@
       <span class="text-8xl lg:text-7xl flex-shrink-0 leading-none">{{ item.category?.icon || getCategoryIcon(item.category?.name)
         }}</span>
       <div class="flex-1 min-w-0">
-        <h3 class="text-4xl lg:text-3xl font-black text-gray-900 leading-tight mb-4">{{ item.name }}</h3>
-        <span class="inline-block text-6xl lg:text-5xl font-black text-primary-600">${{ item.price.toFixed(2) }}</span>
+        <h3 class="text-5xl lg:text-4xl font-black text-gray-900 leading-tight mb-4">{{ item.name }}</h3>
+        <span class="inline-block text-4xl lg:text-3xl font-black text-primary-600">${{ item.price.toFixed(2) }}</span>
       </div>
     </div>
 
     <!-- Description -->
-    <p v-if="item.description" class="text-gray-800 text-2xl lg:text-xl mb-8 leading-relaxed font-semibold flex-grow">
+    <p v-if="item.description" class="text-gray-800 text-3xl lg:text-2xl mb-8 leading-relaxed font-semibold flex-grow">
       {{ item.description }}
     </p>
 
