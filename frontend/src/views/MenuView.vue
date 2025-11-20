@@ -33,8 +33,8 @@
           <p class="text-gray-500 text-xl mt-4 font-semibold">Try adjusting your filters</p>
         </div>
 
-        <!-- Single column on mobile, cards on larger screens -->
-        <div v-else class="space-y-5 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 lg:grid-cols-3">
+        <!-- Single column on mobile, multiple columns on larger screens -->
+        <div v-else class="flex flex-col space-y-5 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 lg:grid-cols-3">
           <ItemCard v-for="item in menuStore.items" :key="item.id" :item="item" @click="selectedItem = item" />
         </div>
 
