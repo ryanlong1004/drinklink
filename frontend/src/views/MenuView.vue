@@ -34,7 +34,7 @@
         </div>
 
         <!-- Single column on mobile, multiple columns on larger screens -->
-        <div v-else class="flex flex-col space-y-5 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 lg:grid-cols-3">
+        <div v-else class="flex flex-col space-y-5 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0 xl:grid-cols-3">
           <ItemCard v-for="item in menuStore.items" :key="item.id" :item="item" @click="selectedItem = item" />
         </div>
 
