@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '../services/api'
+import { useMenuStore } from './menu'
 
 export const useAdminStore = defineStore('admin', {
     state: () => ({
@@ -117,6 +118,10 @@ export const useAdminStore = defineStore('admin', {
             try {
                 await api.updateCategory(id, data)
                 await this.fetchCategories()
+                // Also refresh menu store to update category icons on items
+                const menuStore = useMenuStore()
+                await menuStore.fetchCategories()
+                await menuStore.fetchItems()
                 return true
             } catch (error) {
                 console.error('Error updating category:', error)
