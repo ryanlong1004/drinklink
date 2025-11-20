@@ -5,16 +5,25 @@
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900;
+    /* Prevent zoom on input focus (iOS Safari) */
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+  
+  /* Better tap targets for mobile */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+    @apply px-6 py-3 rounded-xl font-bold transition-all duration-200 active:scale-95 shadow-sm;
   }
   
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700;
+    @apply bg-primary-600 text-white hover:bg-primary-700 shadow-md;
   }
   
   .btn-secondary {
@@ -22,22 +31,63 @@
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-white rounded-xl shadow-md p-6;
   }
   
   .input {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500;
+    @apply w-full px-5 py-3 text-base border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-200 focus:border-primary-500;
   }
   
   .tag-chip {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-colors;
+    @apply inline-flex items-center px-4 py-2 rounded-xl text-base font-semibold cursor-pointer transition-all active:scale-95;
   }
   
   .tag-chip-active {
-    @apply bg-primary-100 text-primary-800 border-2 border-primary-500;
+    @apply bg-primary-100 text-primary-800 border-2 border-primary-500 shadow-sm;
   }
   
   .tag-chip-inactive {
     @apply bg-gray-100 text-gray-700 border-2 border-transparent hover:border-gray-300;
+  }
+}
+
+@layer utilities {
+  /* Mobile-specific utilities */
+  .active\:scale-95:active {
+    transform: scale(0.95);
+  }
+  
+  .active\:scale-98:active {
+    transform: scale(0.98);
+  }
+  
+  /* Smooth scrolling for mobile */
+  .scroll-smooth {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Safe area insets for notched devices */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Prevent rubber band scrolling issues */
+  body {
+    overscroll-behavior-y: none;
+  }
+  
+  /* Fix input zoom on focus */
+  input[type="text"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px;
   }
 }

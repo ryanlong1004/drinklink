@@ -1,83 +1,99 @@
 <template>
-  <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-    @click.self="$emit('close')"
-  >
-    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-      <div class="p-6">
-        <!-- Header -->
-        <div class="flex justify-between items-start mb-4">
-          <h2 class="text-2xl font-bold text-gray-900">{{ item.name }}</h2>
-          <button
-            @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- Image (if available) -->
-        <img
-          v-if="item.image_url"
-          :src="item.image_url"
-          :alt="item.name"
-          class="w-full h-64 object-cover rounded-lg mb-4"
-        />
-
-        <!-- Price and Details -->
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-3xl font-bold text-primary-600">${{ item.price.toFixed(2) }}</span>
-          <div class="flex gap-4 text-sm text-gray-600">
-            <span v-if="item.abv">ABV: {{ item.abv }}%</span>
-            <span v-if="item.volume">{{ item.volume }}</span>
+  <!-- Full-screen modal on mobile, centered on desktop -->
+  <div class="fixed inset-0 bg-black bg-opacity-60 z-50 overflow-y-auto" @click.self="$emit('close')">
+    <div class="min-h-screen md:flex md:items-center md:justify-center md:p-4">
+      <div class="bg-white md:rounded-2xl md:max-w-2xl w-full md:shadow-2xl animate-slideUp">
+        <!-- Mobile-optimized header with large close button -->
+        <div
+          class="sticky top-0 bg-gradient-to-r from-primary-600 to-primary-700 text-white p-6 md:rounded-t-2xl shadow-lg z-10">
+          <div class="flex justify-between items-start gap-4">
+            <div class="flex items-center gap-3 flex-1">
+              <span class="text-5xl">{{ item.category?.icon || '🍺' }}</span>
+              <h2 class="text-2xl md:text-3xl font-bold leading-tight">{{ item.name }}</h2>
+            </div>
+            <button @click="$emit('close')"
+              class="flex-shrink-0 w-12 h-12 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 active:scale-95 transition-all flex items-center justify-center">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-        </div>
 
-        <!-- Category -->
-        <div v-if="item.category" class="mb-4">
-          <span class="inline-block bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-sm font-medium">
-            {{ item.category.name }}
-          </span>
-        </div>
-
-        <!-- Description -->
-        <p v-if="item.description" class="text-gray-700 mb-4 leading-relaxed">
-          {{ item.description }}
-        </p>
-
-        <!-- Producer and Origin -->
-        <div v-if="item.producer || item.origin" class="mb-4 p-4 bg-gray-50 rounded-lg">
-          <div v-if="item.producer" class="mb-2">
-            <span class="font-semibold text-gray-700">Producer:</span>
-            <span class="text-gray-600 ml-2">{{ item.producer }}</span>
-          </div>
-          <div v-if="item.origin">
-            <span class="font-semibold text-gray-700">Origin:</span>
-            <span class="text-gray-600 ml-2">{{ item.origin }}</span>
-          </div>
-        </div>
-
-        <!-- Tags -->
-        <div v-if="item.tags && item.tags.length > 0">
-          <h3 class="font-semibold mb-2">Taste Profile</h3>
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="tag in item.tags"
-              :key="tag.id"
-              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-              :style="{
-                backgroundColor: tag.color + '20',
-                color: tag.color,
-                borderWidth: '2px',
-                borderColor: tag.color
-              }"
-            >
-              {{ tag.name }}
+          <!-- Price in header -->
+          <div class="mt-4">
+            <span class="inline-block text-4xl font-bold bg-white text-primary-600 px-6 py-2 rounded-full shadow-lg">
+              ${{ item.price.toFixed(2) }}
             </span>
           </div>
         </div>
+
+        <div class="p-6 space-y-6">
+          <!-- Image (if available) -->
+          <img v-if="item.image_url" :src="item.image_url" :alt="item.name"
+            class="w-full h-56 md:h-72 object-cover rounded-xl shadow-md" />
+
+          <!-- Specs: ABV & Volume - Large and prominent -->
+          <div class="flex gap-3">
+            <div v-if="item.abv" class="flex-1 bg-amber-50 border-2 border-amber-200 rounded-xl p-4 text-center">
+              <div class="text-amber-600 text-sm font-semibold mb-1">ABV</div>
+              <div class="text-3xl font-bold text-amber-700">{{ item.abv }}%</div>
+            </div>
+            <div v-if="item.volume" class="flex-1 bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-center">
+              <div class="text-blue-600 text-sm font-semibold mb-1">SIZE</div>
+              <div class="text-2xl font-bold text-blue-700">{{ item.volume }}</div>
+            </div>
+          </div>
+
+          <!-- Category Badge -->
+          <div v-if="item.category" class="flex justify-center">
+            <span
+              class="inline-block bg-primary-100 text-primary-800 px-6 py-3 rounded-full text-base font-bold shadow-sm">
+              {{ item.category.name }}
+            </span>
+          </div>
+
+          <!-- Description - Larger, easier to read -->
+          <p v-if="item.description" class="text-gray-700 text-lg leading-relaxed">
+            {{ item.description }}
+          </p>
+
+          <!-- Producer and Origin - Card style -->
+          <div v-if="item.producer || item.origin" class="bg-gray-50 border-2 border-gray-200 rounded-xl p-5 space-y-3">
+            <div v-if="item.producer" class="flex items-start gap-3">
+              <span class="text-2xl">🏭</span>
+              <div class="flex-1">
+                <div class="font-bold text-gray-900 text-sm mb-1">PRODUCER</div>
+                <div class="text-gray-700 text-base">{{ item.producer }}</div>
+              </div>
+            </div>
+            <div v-if="item.origin" class="flex items-start gap-3">
+              <span class="text-2xl">🌍</span>
+              <div class="flex-1">
+                <div class="font-bold text-gray-900 text-sm mb-1">ORIGIN</div>
+                <div class="text-gray-700 text-base">{{ item.origin }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tags - Larger, more prominent -->
+          <div v-if="item.tags && item.tags.length > 0">
+            <h3 class="font-bold text-gray-900 mb-3 text-lg">🎯 Taste Profile</h3>
+            <div class="flex flex-wrap gap-3">
+              <span v-for="tag in item.tags" :key="tag.id"
+                class="inline-flex items-center px-4 py-2.5 rounded-xl text-base font-bold shadow-sm" :style="{
+                  backgroundColor: tag.color + '20',
+                  color: tag.color,
+                  borderWidth: '2px',
+                  borderColor: tag.color
+                }">
+                {{ tag.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom padding for mobile safe area -->
+        <div class="h-8 md:h-4"></div>
       </div>
     </div>
   </div>
@@ -93,3 +109,27 @@ defineProps({
 
 defineEmits(['close'])
 </script>
+
+<style scoped>
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+@media (min-width: 768px) {
+  .animate-slideUp {
+    animation: none;
+  }
+}
+</style>
