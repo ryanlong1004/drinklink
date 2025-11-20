@@ -1,50 +1,51 @@
 <template>
-  <!-- Mobile-First Pagination: Larger buttons, simpler on small screens -->
-  <div class="flex justify-center items-center gap-2 flex-wrap">
+  <!-- Mobile-First Pagination: ULTRA large buttons for easy tapping -->
+  <div class="flex justify-center items-center gap-3 flex-wrap">
     <!-- First page button -->
     <button @click="menuStore.setPage(1)" :disabled="menuStore.pagination.page === 1"
-      class="w-12 h-12 md:w-auto md:px-4 md:py-3 rounded-xl border-2 border-gray-300 font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all">
+      class="w-16 h-16 md:w-auto md:px-6 md:py-5 rounded-xl border-3 border-gray-400 font-black text-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all shadow-md">
       <span class="hidden md:inline">First</span>
       <span class="md:hidden">««</span>
     </button>
 
     <!-- Previous button -->
     <button @click="menuStore.setPage(menuStore.pagination.page - 1)" :disabled="menuStore.pagination.page === 1"
-      class="px-5 py-3 rounded-xl border-2 border-gray-300 font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all">
+      class="px-7 py-5 rounded-xl border-3 border-gray-400 font-black text-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all shadow-md">
       ← Prev
     </button>
 
     <!-- Page numbers - simplified on mobile -->
-    <div class="hidden md:flex gap-2">
+    <div class="hidden md:flex gap-3">
       <button v-for="page in visiblePages" :key="page" @click="page !== '...' && menuStore.setPage(page)"
         :disabled="page === '...'" :class="[
-          'w-12 h-12 rounded-xl border-2 font-bold transition-all',
+          'w-16 h-16 rounded-xl border-3 font-black text-2xl transition-all shadow-md',
           page === menuStore.pagination.page
-            ? 'bg-primary-600 text-white border-primary-600 shadow-md'
+            ? 'bg-primary-600 text-white border-primary-700 shadow-lg'
             : page === '...'
               ? 'border-transparent cursor-default'
-              : 'border-gray-300 hover:bg-gray-50 active:scale-95'
+              : 'border-gray-400 hover:bg-gray-50 active:scale-95'
         ]">
         {{ page }}
       </button>
     </div>
 
     <!-- Mobile: Show current page info -->
-    <div class="md:hidden px-5 py-3 bg-primary-100 text-primary-800 rounded-xl font-bold text-base">
+    <div
+      class="md:hidden px-7 py-5 bg-primary-100 text-primary-900 rounded-xl font-black text-2xl border-2 border-primary-300 shadow-sm">
       {{ menuStore.pagination.page }} / {{ menuStore.pagination.pages }}
     </div>
 
     <!-- Next button -->
     <button @click="menuStore.setPage(menuStore.pagination.page + 1)"
       :disabled="menuStore.pagination.page === menuStore.pagination.pages"
-      class="px-5 py-3 rounded-xl border-2 border-gray-300 font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all">
+      class="px-7 py-5 rounded-xl border-3 border-gray-400 font-black text-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all shadow-md">
       Next →
     </button>
 
     <!-- Last page button -->
     <button @click="menuStore.setPage(menuStore.pagination.pages)"
       :disabled="menuStore.pagination.page === menuStore.pagination.pages"
-      class="w-12 h-12 md:w-auto md:px-4 md:py-3 rounded-xl border-2 border-gray-300 font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all">
+      class="w-16 h-16 md:w-auto md:px-6 md:py-5 rounded-xl border-3 border-gray-400 font-black text-2xl disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-95 transition-all shadow-md">
       <span class="hidden md:inline">Last</span>
       <span class="md:hidden">»»</span>
     </button>

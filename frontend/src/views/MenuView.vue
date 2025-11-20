@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-50 pb-20">
-    <!-- Mobile-First Header - Extra Large -->
+    <!-- Mobile-First Header - ULTRA Large -->
     <header class="bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg sticky top-0 z-20">
-      <div class="px-6 py-8">
-        <h1 class="text-5xl font-black mb-3 tracking-tight">🍺 DrinkLink</h1>
-        <p class="text-primary-50 text-lg font-semibold">Tap to explore our selection</p>
+      <div class="px-6 py-10">
+        <h1 class="text-7xl font-black mb-4 tracking-tight">🍺 DrinkLink</h1>
+        <p class="text-primary-50 text-2xl font-bold">Tap to explore our selection</p>
       </div>
     </header>
 
@@ -16,30 +16,30 @@
     <!-- Items Grid - Mobile First -->
     <main class="px-4 py-5">
       <div v-if="menuStore.loading" class="text-center py-20">
-        <div class="inline-block animate-spin rounded-full h-20 w-20 border-4 border-primary-200 border-t-primary-600">
+        <div class="inline-block animate-spin rounded-full h-24 w-24 border-4 border-primary-200 border-t-primary-600">
         </div>
-        <p class="mt-8 text-gray-700 text-2xl font-bold">Loading menu...</p>
+        <p class="mt-10 text-gray-700 text-3xl font-black">Loading menu...</p>
       </div>
 
       <div v-else-if="menuStore.error" class="text-center py-20 px-4">
-        <div class="text-7xl mb-6">😕</div>
-        <p class="text-red-600 text-2xl font-bold">{{ menuStore.error }}</p>
+        <div class="text-8xl mb-8">😕</div>
+        <p class="text-red-600 text-3xl font-black">{{ menuStore.error }}</p>
       </div>
 
       <div v-else>
         <div v-if="menuStore.items.length === 0" class="text-center py-20 px-4">
-          <div class="text-7xl mb-6">🔍</div>
-          <p class="text-gray-700 text-2xl font-bold">No items found</p>
-          <p class="text-gray-500 text-sm mt-2">Try adjusting your filters</p>
+          <div class="text-8xl mb-8">🔍</div>
+          <p class="text-gray-700 text-3xl font-black">No items found</p>
+          <p class="text-gray-500 text-xl mt-4 font-semibold">Try adjusting your filters</p>
         </div>
 
         <!-- Single column on mobile, cards on larger screens -->
-        <div v-else class="space-y-3 md:grid md:grid-cols-2 md:gap-4 md:space-y-0 lg:grid-cols-3">
+        <div v-else class="space-y-5 md:grid md:grid-cols-2 md:gap-6 md:space-y-0 lg:grid-cols-3">
           <ItemCard v-for="item in menuStore.items" :key="item.id" :item="item" @click="selectedItem = item" />
         </div>
 
         <!-- Pagination - Mobile Friendly -->
-        <div class="mt-6">
+        <div class="mt-8">
           <Pagination v-if="menuStore.pagination.pages > 1" />
         </div>
       </div>
