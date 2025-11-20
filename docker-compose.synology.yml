@@ -36,7 +36,7 @@ services:
       - drinklink
 
   frontend:
-    image: saltycatfish/drinklink-frontend:v3.0.2-ultra
+    image: saltycatfish/drinklink-frontend:v3.1.0-ultra
     container_name: drinklink-frontend
     ports:
       - "3080:80"
