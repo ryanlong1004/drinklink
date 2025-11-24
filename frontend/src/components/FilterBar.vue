@@ -13,7 +13,7 @@
     <!-- Categories - Horizontal scroll on mobile -->
     <div v-if="menuStore.categories.length > 0">
       <h3 class="font-black text-lg mb-3 text-gray-900">Categories</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 md:scrollbar-hide">
         <button @click="menuStore.setFilter('categoryId', null)" :class="[
           'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2',
           menuStore.filters.categoryId === null
@@ -37,7 +37,7 @@
     <!-- Tags - Horizontal scroll on mobile -->
     <div v-if="menuStore.tags.length > 0">
       <h3 class="font-black text-lg mb-3 text-gray-900">Filter by Taste</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 md:scrollbar-hide">
         <button v-for="tag in menuStore.tags" :key="tag.id" @click="menuStore.toggleTag(tag.id)" :class="[
           'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2 whitespace-nowrap',
           menuStore.filters.tagIds.includes(tag.id) ? 'shadow-md scale-105' : 'active:scale-95'
@@ -58,7 +58,7 @@
     <!-- Origins - Horizontal scroll on mobile -->
     <div v-if="menuStore.origins.length > 0">
       <h3 class="font-black text-lg mb-3 text-gray-900">Filter by Origin</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 md:scrollbar-hide">
         <button @click="menuStore.setFilter('origin', null)" :class="[
           'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2',
           menuStore.filters.origin === null
@@ -148,13 +148,37 @@ const hasActiveFilters = computed(() => {
 </script>
 
 <style scoped>
-/* Hide scrollbar for horizontal scroll on mobile */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Hide scrollbar only on mobile (md breakpoint and up hides it for tablets+) */
+/* On desktop/laptop (below md), scrollbar will be visible for better UX */
+@media (min-width: 768px) {
+  .md\:scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .md\:scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+/* On smaller screens, show thin scrollbar */
+@media (max-width: 767px) {
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 </style>
