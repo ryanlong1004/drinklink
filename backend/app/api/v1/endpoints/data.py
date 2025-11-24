@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.core.database import get_db
 from app.models import Category, Tag, Item
 from app.api.v1.endpoints.auth import get_current_user
@@ -289,7 +290,46 @@ async def import_data(
                     item.tags = tags
 
                 db.add(item)
-                items_imported += 1
+                try:
+                    db.flush()  # Force ID generation
+                    items_imported += 1
+                except IntegrityError:
+                    # ID conflict - sequence out of sync, update instead
+                    db.rollback()
+                    existing_conflict = (
+                        db.query(Item)
+                        .filter(
+                            Item.name == item_data["name"],
+                            Item.category_id == category_id,
+                        )
+                        .first()
+                    )
+                    if existing_conflict:
+                        existing_conflict.description = item_data.get("description")
+                        existing_conflict.price = item_data.get("price", 0.0)
+                        existing_conflict.abv = item_data.get("abv")
+                        existing_conflict.volume = item_data.get("volume")
+                        existing_conflict.origin = item_data.get("origin")
+                        existing_conflict.producer = item_data.get("producer")
+                        existing_conflict.is_published = item_data.get(
+                            "is_published", True
+                        )
+                        existing_conflict.sort_order = item_data.get("sort_order", 0)
+                        existing_conflict.image_url = item_data.get("image_url")
+
+                        if "tag_ids" in item_data:
+                            tags = (
+                                db.query(Tag)
+                                .filter(Tag.id.in_(item_data["tag_ids"]))
+                                .all()
+                            )
+                            existing_conflict.tags = tags
+                        elif "tags" in item_data:
+                            tag_names = item_data["tags"]
+                            tags = db.query(Tag).filter(Tag.name.in_(tag_names)).all()
+                            existing_conflict.tags = tags
+
+                        items_updated += 1
 
         db.commit()
 
