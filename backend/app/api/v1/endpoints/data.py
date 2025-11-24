@@ -149,6 +149,17 @@ async def import_data(
         except Exception:
             pass
 
+        # Fix PostgreSQL sequence for items BEFORE importing
+        # This prevents ID conflicts when auto-generating IDs
+        try:
+            db.execute(
+                "SELECT setval('items_id_seq', "
+                "(SELECT COALESCE(MAX(id), 0) FROM items), true)"
+            )
+            db.commit()
+        except Exception:
+            pass
+
         # Import items
         items_imported = 0
         items_updated = 0
@@ -246,17 +257,6 @@ async def import_data(
                 items_imported += 1
 
         db.commit()
-
-        # Fix PostgreSQL sequence for items table after import
-        # This ensures the next auto-generated ID doesn't conflict
-        try:
-            db.execute(
-                "SELECT setval('items_id_seq', (SELECT MAX(id) FROM items), true)"
-            )
-            db.commit()
-        except Exception:
-            # Ignore if sequence doesn't exist or other issues
-            pass
 
         return {
             "success": True,
