@@ -2,15 +2,22 @@
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
       <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-        <h3 class="text-xl font-bold">{{ isEditing ? 'Edit Category' : 'Create Category' }}</h3>
-        <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">
+        <h3 class="text-xl font-bold">
+          {{ isEditing ? 'Edit Category' : 'Create Category' }}
+        </h3>
+        <button class="text-gray-400 hover:text-gray-600" @click="$emit('close')">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
+      <form class="p-6 space-y-6" @submit.prevent="handleSubmit">
         <!-- Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -18,12 +25,12 @@
           </label>
           <input
             v-model="form.name"
-            @input="generateSlug"
             type="text"
             required
             maxlength="50"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="e.g., Draft Beer"
+            @input="generateSlug"
           />
         </div>
 
@@ -58,13 +65,13 @@
               v-for="icon in availableIcons"
               :key="icon"
               type="button"
-              @click="form.icon = icon"
               :class="[
                 'text-3xl p-3 rounded-lg border-2 transition-all hover:scale-110',
-                form.icon === icon 
-                  ? 'border-primary-500 bg-primary-50' 
-                  : 'border-gray-200 hover:border-gray-300'
+                form.icon === icon
+                  ? 'border-primary-500 bg-primary-50'
+                  : 'border-gray-200 hover:border-gray-300',
               ]"
+              @click="form.icon = icon"
             >
               {{ icon }}
             </button>
@@ -72,10 +79,10 @@
           <div v-if="form.icon" class="mt-2 flex items-center gap-2 text-sm text-gray-600">
             <span>Selected:</span>
             <span class="text-2xl">{{ form.icon }}</span>
-            <button 
+            <button
               type="button"
-              @click="form.icon = null" 
               class="text-xs text-red-600 hover:text-red-800"
+              @click="form.icon = null"
             >
               Clear
             </button>
@@ -90,7 +97,7 @@
             rows="3"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="Optional description for this category"
-          ></textarea>
+          />
         </div>
 
         <!-- Sort Order -->
@@ -111,8 +118,8 @@
         <div class="flex justify-end gap-3 pt-4 border-t">
           <button
             type="button"
-            @click="$emit('close')"
             class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            @click="$emit('close')"
           >
             Cancel
           </button>
@@ -121,7 +128,7 @@
             :disabled="submitting"
             class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
-            {{ submitting ? 'Saving...' : (isEditing ? 'Update Category' : 'Create Category') }}
+            {{ submitting ? 'Saving...' : isEditing ? 'Update Category' : 'Create Category' }}
           </button>
         </div>
       </form>
@@ -136,8 +143,8 @@ import { useAdminStore } from '../../stores/admin'
 const props = defineProps({
   category: {
     type: Object,
-    default: null
-  }
+    default: null,
+  },
 })
 
 const emit = defineEmits(['close', 'saved'])
@@ -174,7 +181,7 @@ const form = ref({
   slug: '',
   description: '',
   icon: null,
-  sort_order: 0
+  sort_order: 0,
 })
 
 // Populate form if editing
@@ -184,7 +191,7 @@ if (props.category) {
     slug: props.category.slug,
     description: props.category.description || '',
     icon: props.category.icon || null,
-    sort_order: props.category.sort_order
+    sort_order: props.category.sort_order,
   }
   // When editing, slug is already set, so mark as manually edited
   slugManuallyEdited.value = true
@@ -214,7 +221,7 @@ const handleSubmit = async () => {
     } else {
       success = await adminStore.createCategory(form.value)
     }
-    
+
     if (success) {
       emit('saved')
       emit('close')

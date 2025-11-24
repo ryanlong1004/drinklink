@@ -2,15 +2,22 @@
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
       <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-        <h3 class="text-xl font-bold">{{ isEditing ? 'Edit Item' : 'Create Item' }}</h3>
-        <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">
+        <h3 class="text-xl font-bold">
+          {{ isEditing ? 'Edit Item' : 'Create Item' }}
+        </h3>
+        <button class="text-gray-400 hover:text-gray-600" @click="$emit('close')">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
+      <form class="p-6 space-y-6" @submit.prevent="handleSubmit">
         <!-- Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -32,9 +39,9 @@
             Description
             <button
               type="button"
-              @click="suggestTags"
               :disabled="suggestingTags || !form.name"
               class="ml-2 text-xs text-primary-600 hover:text-primary-800 disabled:opacity-50"
+              @click="suggestTags"
             >
               {{ suggestingTags ? 'Suggesting...' : '✨ Suggest Tags' }}
             </button>
@@ -44,7 +51,7 @@
             rows="3"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="Describe the drink's flavor profile, notes, etc."
-          ></textarea>
+          />
         </div>
 
         <!-- Category & Price Row -->
@@ -163,14 +170,14 @@
               v-for="tag in availableTags"
               :key="tag.id"
               type="button"
-              @click="toggleTag(tag.id)"
               :class="[
                 'px-3 py-1 rounded-full text-sm font-medium transition-colors',
                 form.tag_ids.includes(tag.id)
                   ? 'text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
               ]"
               :style="form.tag_ids.includes(tag.id) ? { backgroundColor: tag.color } : {}"
+              @click="toggleTag(tag.id)"
             >
               {{ tag.name }}
             </button>
@@ -183,9 +190,9 @@
         <!-- Published Status -->
         <div class="flex items-center">
           <input
+            id="is_published"
             v-model="form.is_published"
             type="checkbox"
-            id="is_published"
             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
           />
           <label for="is_published" class="ml-2 block text-sm text-gray-700">
@@ -197,8 +204,8 @@
         <div class="flex justify-end gap-3 pt-4 border-t">
           <button
             type="button"
-            @click="$emit('close')"
             class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            @click="$emit('close')"
           >
             Cancel
           </button>
@@ -207,7 +214,7 @@
             :disabled="submitting"
             class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
-            {{ submitting ? 'Saving...' : (isEditing ? 'Update Item' : 'Create Item') }}
+            {{ submitting ? 'Saving...' : isEditing ? 'Update Item' : 'Create Item' }}
           </button>
         </div>
       </form>
@@ -222,8 +229,8 @@ import { useAdminStore } from '../../stores/admin'
 const props = defineProps({
   item: {
     type: Object,
-    default: null
-  }
+    default: null,
+  },
 })
 
 const emit = defineEmits(['close', 'saved'])
@@ -251,7 +258,7 @@ const form = ref({
   is_published: true,
   sort_order: 0,
   image_url: '',
-  tag_ids: []
+  tag_ids: [],
 })
 
 // Populate form if editing
@@ -268,11 +275,11 @@ if (props.item) {
     is_published: props.item.is_published,
     sort_order: props.item.sort_order,
     image_url: props.item.image_url || '',
-    tag_ids: props.item.tags?.map(t => t.id) || []
+    tag_ids: props.item.tags?.map(t => t.id) || [],
   }
 }
 
-const toggleTag = (tagId) => {
+const toggleTag = tagId => {
   const index = form.value.tag_ids.indexOf(tagId)
   if (index > -1) {
     form.value.tag_ids.splice(index, 1)
@@ -283,22 +290,24 @@ const toggleTag = (tagId) => {
 
 const suggestTags = async () => {
   if (!form.value.name) return
-  
+
   suggestingTags.value = true
   try {
     const result = await adminStore.suggestTags({
       name: form.value.name,
       description: form.value.description || undefined,
       abv: form.value.abv || undefined,
-      origin: form.value.origin || undefined
+      origin: form.value.origin || undefined,
     })
-    
+
     // Add suggested tags that exist in the database
     if (result.existing_tags && result.existing_tags.length > 0) {
-      const newTagIds = result.existing_tags.map(t => t.id).filter(id => !form.value.tag_ids.includes(id))
+      const newTagIds = result.existing_tags
+        .map(t => t.id)
+        .filter(id => !form.value.tag_ids.includes(id))
       form.value.tag_ids.push(...newTagIds)
       suggestedTagIds.value = newTagIds
-      
+
       // Clear the suggestion highlight after a few seconds
       setTimeout(() => {
         suggestedTagIds.value = []
@@ -318,7 +327,7 @@ const handleSubmit = async () => {
     } else {
       success = await adminStore.createItem(form.value)
     }
-    
+
     if (success) {
       emit('saved')
       emit('close')

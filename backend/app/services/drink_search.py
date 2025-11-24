@@ -1,5 +1,4 @@
 import httpx
-from typing import List, Dict, Optional
 
 
 class DrinkDatabaseService:
@@ -23,7 +22,7 @@ class DrinkDatabaseService:
     }
 
     @staticmethod
-    async def search_beers(query: str) -> List[Dict]:
+    async def search_beers(query: str) -> list[dict]:
         """
         Search Open Brewery DB for breweries and construct beer data.
         This is a simplified example - in production, you'd use a proper beer API.
@@ -76,7 +75,7 @@ class DrinkDatabaseService:
         return results
 
     @staticmethod
-    def create_mock_results(query: str) -> List[Dict]:
+    def create_mock_results(query: str) -> list[dict]:
         """
         Create mock search results based on common drinks.
         This is a fallback for demo purposes.
@@ -148,7 +147,7 @@ class DrinkDatabaseService:
         return results
 
     @staticmethod
-    async def search_drinks(query: str) -> List[Dict]:
+    async def search_drinks(query: str) -> list[dict]:
         """
         Main search method that tries multiple sources.
         """

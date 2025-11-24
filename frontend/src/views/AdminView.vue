@@ -7,19 +7,21 @@
           <h1 class="text-2xl font-bold text-primary-600">DrinkLink Admin</h1>
         </div>
         <div class="flex items-center gap-4">
-          <button @click="handleExport" class="btn btn-primary" :disabled="exporting">
+          <button class="btn btn-primary" :disabled="exporting" @click="handleExport">
             {{ exporting ? 'Exporting...' : 'Export Data' }}
           </button>
           <label class="btn btn-primary cursor-pointer">
-            <input type="file" @change="handleImport" accept=".json" class="hidden" :disabled="importing">
+            <input
+              type="file"
+              accept=".json"
+              class="hidden"
+              :disabled="importing"
+              @change="handleImport"
+            />
             {{ importing ? 'Importing...' : 'Import Data' }}
           </label>
-          <router-link to="/" class="text-gray-600 hover:text-gray-900">
-            View Menu
-          </router-link>
-          <button @click="handleLogout" class="btn btn-secondary">
-            Logout
-          </button>
+          <router-link to="/" class="text-gray-600 hover:text-gray-900"> View Menu </router-link>
+          <button class="btn btn-secondary" @click="handleLogout">Logout</button>
         </div>
       </div>
     </header>
@@ -29,35 +31,35 @@
       <div class="border-b border-gray-200">
         <nav class="-mb-px flex space-x-8">
           <button
-            @click="activeTab = 'items'"
             :class="[
               'py-4 px-1 border-b-2 font-medium text-sm',
               activeTab === 'items'
                 ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
             ]"
+            @click="activeTab = 'items'"
           >
             Menu Items
           </button>
           <button
-            @click="activeTab = 'categories'"
             :class="[
               'py-4 px-1 border-b-2 font-medium text-sm',
               activeTab === 'categories'
                 ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
             ]"
+            @click="activeTab = 'categories'"
           >
             Categories
           </button>
           <button
-            @click="activeTab = 'tags'"
             :class="[
               'py-4 px-1 border-b-2 font-medium text-sm',
               activeTab === 'tags'
                 ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
             ]"
+            @click="activeTab = 'tags'"
           >
             Tags
           </button>
@@ -94,7 +96,7 @@ const currentTabComponent = computed(() => {
   const components = {
     items: AdminItems,
     categories: AdminCategories,
-    tags: AdminTags
+    tags: AdminTags,
   }
   return components[activeTab.value]
 })
@@ -108,7 +110,7 @@ const handleExport = async () => {
   try {
     exporting.value = true
     const response = await api.exportData()
-    
+
     // Create blob from JSON data and download
     const jsonStr = JSON.stringify(response.data, null, 2)
     const blob = new Blob([jsonStr], { type: 'application/json' })
@@ -120,7 +122,7 @@ const handleExport = async () => {
     link.click()
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
-    
+
     alert('Data exported successfully!')
   } catch (error) {
     console.error('Export failed:', error)
@@ -130,27 +132,27 @@ const handleExport = async () => {
   }
 }
 
-const handleImport = async (event) => {
+const handleImport = async event => {
   const file = event.target.files[0]
   if (!file) return
-  
+
   try {
     importing.value = true
-    
+
     // Read file
     const text = await file.text()
     const data = JSON.parse(text)
-    
+
     // Import data
     const response = await api.importData(data)
-    
+
     alert(
       `Import successful!\n` +
-      `Categories: ${response.data.categories_imported || 0}\n` +
-      `Tags: ${response.data.tags_imported || 0}\n` +
-      `Items: ${response.data.items_imported || 0}`
+        `Categories: ${response.data.categories_imported || 0}\n` +
+        `Tags: ${response.data.tags_imported || 0}\n` +
+        `Items: ${response.data.items_imported || 0}`
     )
-    
+
     // Refresh current view
     if (activeTab.value === 'items') {
       await adminStore.fetchAllItems()

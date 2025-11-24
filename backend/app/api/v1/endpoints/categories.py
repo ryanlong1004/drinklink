@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+
+from app.api.v1.endpoints.auth import get_current_user
 from app.core.database import get_db
 from app.models import Category
-from app.schemas.item import CategoryResponse, CategoryCreate, CategoryUpdate
-from app.api.v1.endpoints.auth import get_current_user
+from app.schemas.item import CategoryCreate, CategoryResponse, CategoryUpdate
 
 router = APIRouter()
 
 
-@router.get("", response_model=List[CategoryResponse])
+@router.get("", response_model=list[CategoryResponse])
 async def get_categories(db: Session = Depends(get_db)):
     """
     Get all categories.
@@ -70,9 +70,7 @@ async def update_category(
 
     # Check slug uniqueness if being updated
     if category_data.slug and category_data.slug != category.slug:
-        existing = (
-            db.query(Category).filter(Category.slug == category_data.slug).first()
-        )
+        existing = db.query(Category).filter(Category.slug == category_data.slug).first()
         if existing:
             raise HTTPException(status_code=400, detail="Category slug already exists")
 
