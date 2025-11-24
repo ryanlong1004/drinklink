@@ -5,8 +5,9 @@ from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
-# Import your models here
+# Import your models here so Alembic can detect them
 from app.core.database import Base
+from app.models import Category, Item, Tag  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
