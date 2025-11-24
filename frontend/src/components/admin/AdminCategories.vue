@@ -1,8 +1,13 @@
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Categories</h2>
-      <button @click="showCreateModal = true" class="btn btn-primary">
+      <h2 class="text-2xl font-bold">
+        Categories
+      </h2>
+      <button
+        class="btn btn-primary"
+        @click="showCreateModal = true"
+      >
         + Add Category
       </button>
     </div>
@@ -14,18 +19,30 @@
         class="card"
       >
         <div class="flex justify-between items-start mb-2">
-          <h3 class="text-lg font-semibold">{{ category.name }}</h3>
+          <h3 class="text-lg font-semibold">
+            {{ category.name }}
+          </h3>
           <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
             Order: {{ category.sort_order }}
           </span>
         </div>
-        <p class="text-xs text-gray-500 mb-2 font-mono">{{ category.slug }}</p>
-        <p class="text-sm text-gray-600 mb-3">{{ category.description || 'No description' }}</p>
+        <p class="text-xs text-gray-500 mb-2 font-mono">
+          {{ category.slug }}
+        </p>
+        <p class="text-sm text-gray-600 mb-3">
+          {{ category.description || 'No description' }}
+        </p>
         <div class="flex gap-2">
-          <button @click="editCategory(category)" class="text-sm text-primary-600 hover:text-primary-900">
+          <button
+            class="text-sm text-primary-600 hover:text-primary-900"
+            @click="editCategory(category)"
+          >
             Edit
           </button>
-          <button @click="deleteCategory(category)" class="text-sm text-red-600 hover:text-red-900">
+          <button
+            class="text-sm text-red-600 hover:text-red-900"
+            @click="deleteCategory(category)"
+          >
             Delete
           </button>
         </div>

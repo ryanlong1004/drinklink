@@ -2,15 +2,33 @@
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
       <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-        <h3 class="text-xl font-bold">{{ isEditing ? 'Edit Item' : 'Create Item' }}</h3>
-        <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <h3 class="text-xl font-bold">
+          {{ isEditing ? 'Edit Item' : 'Create Item' }}
+        </h3>
+        <button
+          class="text-gray-400 hover:text-gray-600"
+          @click="$emit('close')"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
+      <form
+        class="p-6 space-y-6"
+        @submit.prevent="handleSubmit"
+      >
         <!-- Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -23,7 +41,7 @@
             maxlength="100"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="e.g., Miller Lite Draft"
-          />
+          >
         </div>
 
         <!-- Description -->
@@ -32,9 +50,9 @@
             Description
             <button
               type="button"
-              @click="suggestTags"
               :disabled="suggestingTags || !form.name"
               class="ml-2 text-xs text-primary-600 hover:text-primary-800 disabled:opacity-50"
+              @click="suggestTags"
             >
               {{ suggestingTags ? 'Suggesting...' : '✨ Suggest Tags' }}
             </button>
@@ -44,7 +62,7 @@
             rows="3"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="Describe the drink's flavor profile, notes, etc."
-          ></textarea>
+          />
         </div>
 
         <!-- Category & Price Row -->
@@ -55,8 +73,14 @@
               v-model="form.category_id"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option :value="null">No category</option>
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+              <option :value="null">
+                No category
+              </option>
+              <option
+                v-for="cat in categories"
+                :key="cat.id"
+                :value="cat.id"
+              >
                 {{ cat.name }}
               </option>
             </select>
@@ -76,7 +100,7 @@
                 required
                 class="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="0.00"
-              />
+              >
             </div>
           </div>
         </div>
@@ -93,7 +117,7 @@
               max="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., 5.0"
-            />
+            >
           </div>
 
           <div>
@@ -104,7 +128,7 @@
               maxlength="20"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., 16 oz"
-            />
+            >
           </div>
 
           <div>
@@ -114,7 +138,7 @@
               type="number"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="0"
-            />
+            >
           </div>
         </div>
 
@@ -128,7 +152,7 @@
               maxlength="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., California, USA"
-            />
+            >
           </div>
 
           <div>
@@ -139,7 +163,7 @@
               maxlength="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., Miller Brewing Company"
-            />
+            >
           </div>
         </div>
 
@@ -152,7 +176,7 @@
             maxlength="500"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="https://example.com/image.jpg"
-          />
+          >
         </div>
 
         <!-- Tags -->
@@ -163,7 +187,6 @@
               v-for="tag in availableTags"
               :key="tag.id"
               type="button"
-              @click="toggleTag(tag.id)"
               :class="[
                 'px-3 py-1 rounded-full text-sm font-medium transition-colors',
                 form.tag_ids.includes(tag.id)
@@ -171,11 +194,15 @@
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               ]"
               :style="form.tag_ids.includes(tag.id) ? { backgroundColor: tag.color } : {}"
+              @click="toggleTag(tag.id)"
             >
               {{ tag.name }}
             </button>
           </div>
-          <p v-if="suggestedTagIds.length > 0" class="text-xs text-gray-500 mt-2">
+          <p
+            v-if="suggestedTagIds.length > 0"
+            class="text-xs text-gray-500 mt-2"
+          >
             💡 Suggested: {{ suggestedTagIds.length }} tag(s) based on description
           </p>
         </div>
@@ -183,12 +210,15 @@
         <!-- Published Status -->
         <div class="flex items-center">
           <input
+            id="is_published"
             v-model="form.is_published"
             type="checkbox"
-            id="is_published"
             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-          />
-          <label for="is_published" class="ml-2 block text-sm text-gray-700">
+          >
+          <label
+            for="is_published"
+            class="ml-2 block text-sm text-gray-700"
+          >
             Publish immediately (visible to public)
           </label>
         </div>
@@ -197,8 +227,8 @@
         <div class="flex justify-end gap-3 pt-4 border-t">
           <button
             type="button"
-            @click="$emit('close')"
             class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            @click="$emit('close')"
           >
             Cancel
           </button>
