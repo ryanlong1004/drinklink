@@ -153,11 +153,11 @@ const handleImport = async (event) => {
     
     // Refresh current view
     if (activeTab.value === 'items') {
-      await adminStore.loadItems()
+      await adminStore.fetchAllItems()
     } else if (activeTab.value === 'categories') {
-      await adminStore.loadCategories()
+      await adminStore.fetchCategories()
     } else if (activeTab.value === 'tags') {
-      await adminStore.loadTags()
+      await adminStore.fetchTags()
     }
   } catch (error) {
     console.error('Import failed:', error)
