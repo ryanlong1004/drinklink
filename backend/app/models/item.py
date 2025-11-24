@@ -1,28 +1,25 @@
 from sqlalchemy import (
+    Boolean,
     Column,
+    DateTime,
+    Float,
+    ForeignKey,
     Integer,
     String,
-    Float,
-    Boolean,
-    Text,
-    DateTime,
     Table,
-    ForeignKey,
+    Text,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from app.core.database import Base
 
 # Association table for many-to-many relationship between items and tags
 item_tags = Table(
     "item_tags",
     Base.metadata,
-    Column(
-        "item_id", Integer, ForeignKey("items.id", ondelete="CASCADE"), primary_key=True
-    ),
-    Column(
-        "tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True
-    ),
+    Column("item_id", Integer, ForeignKey("items.id", ondelete="CASCADE"), primary_key=True),
+    Column("tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
 )
 
 
@@ -39,9 +36,7 @@ class Category(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    items = relationship(
-        "Item", back_populates="category", cascade="all, delete-orphan"
-    )
+    items = relationship("Item", back_populates="category", cascade="all, delete-orphan")
 
 
 class Tag(Base):

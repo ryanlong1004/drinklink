@@ -1,5 +1,4 @@
 import re
-from typing import List, Dict, Set
 
 
 class TagSuggestionService:
@@ -9,7 +8,7 @@ class TagSuggestionService:
     """
 
     # Keyword to tag mapping
-    TAG_KEYWORDS: Dict[str, List[str]] = {
+    TAG_KEYWORDS: dict[str, list[str]] = {
         # Hop characteristics
         "hoppy": ["hop", "hops", "hopped", "pine", "resinous", "dank", "piney"],
         "citrusy": [
@@ -71,7 +70,7 @@ class TagSuggestionService:
     }
 
     @classmethod
-    def suggest_tags_from_text(cls, text: str) -> Set[str]:
+    def suggest_tags_from_text(cls, text: str) -> set[str]:
         """
         Analyze text and suggest appropriate tag names.
 
@@ -100,7 +99,7 @@ class TagSuggestionService:
     @classmethod
     def suggest_tags_from_item(
         cls, name: str, description: str = None, abv: float = None, origin: str = None
-    ) -> Set[str]:
+    ) -> set[str]:
         """
         Suggest tags based on multiple item attributes.
 

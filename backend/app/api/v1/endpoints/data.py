@@ -1,10 +1,12 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from app.core.database import get_db
-from app.models import Category, Tag, Item
+from sqlalchemy.orm import Session
+
 from app.api.v1.endpoints.auth import get_current_user
-from typing import Dict, Any
+from app.core.database import get_db
+from app.models import Category, Item, Tag
 
 router = APIRouter()
 
@@ -78,7 +80,7 @@ async def export_data(
 
 @router.post("/import")
 async def import_data(
-    data: Dict[Any, Any],
+    data: dict[Any, Any],
     current_user: str = Depends(get_current_user),
     db: Session = Depends(get_db),
     clear_existing: bool = False,
@@ -119,8 +121,7 @@ async def import_data(
         # Fix PostgreSQL sequence for categories table
         try:
             db.execute(
-                "SELECT setval('categories_id_seq', "
-                "(SELECT MAX(id) FROM categories), true)"
+                "SELECT setval('categories_id_seq', " "(SELECT MAX(id) FROM categories), true)"
             )
             db.commit()
         except Exception:
@@ -154,8 +155,7 @@ async def import_data(
         # This prevents ID conflicts when auto-generating IDs
         try:
             db.execute(
-                "SELECT setval('items_id_seq', "
-                "(SELECT COALESCE(MAX(id), 0) FROM items), true)"
+                "SELECT setval('items_id_seq', " "(SELECT COALESCE(MAX(id), 0) FROM items), true)"
             )
             db.commit()
         except Exception:
@@ -185,9 +185,7 @@ async def import_data(
 
                     # Update tags
                     if "tag_ids" in item_data:
-                        tags = (
-                            db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
-                        )
+                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
                         existing.tags = tags
 
                     items_updated += 1
@@ -210,9 +208,7 @@ async def import_data(
 
                     # Add tags
                     if "tag_ids" in item_data:
-                        tags = (
-                            db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
-                        )
+                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
                         item.tags = tags
 
                     db.add(item)
@@ -223,9 +219,7 @@ async def import_data(
                 category_id = item_data.get("category_id")
                 if not category_id and "category" in item_data:
                     category = (
-                        db.query(Category)
-                        .filter(Category.name == item_data["category"])
-                        .first()
+                        db.query(Category).filter(Category.name == item_data["category"]).first()
                     )
                     if category:
                         category_id = category.id
@@ -233,9 +227,7 @@ async def import_data(
                 # Check if item already exists by name and category
                 existing_by_name = (
                     db.query(Item)
-                    .filter(
-                        Item.name == item_data["name"], Item.category_id == category_id
-                    )
+                    .filter(Item.name == item_data["name"], Item.category_id == category_id)
                     .first()
                 )
 
@@ -253,9 +245,7 @@ async def import_data(
 
                     # Update tags
                     if "tag_ids" in item_data:
-                        tags = (
-                            db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
-                        )
+                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
                         existing_by_name.tags = tags
                     elif "tags" in item_data:
                         tag_names = item_data["tags"]
@@ -311,18 +301,12 @@ async def import_data(
                         existing_conflict.volume = item_data.get("volume")
                         existing_conflict.origin = item_data.get("origin")
                         existing_conflict.producer = item_data.get("producer")
-                        existing_conflict.is_published = item_data.get(
-                            "is_published", True
-                        )
+                        existing_conflict.is_published = item_data.get("is_published", True)
                         existing_conflict.sort_order = item_data.get("sort_order", 0)
                         existing_conflict.image_url = item_data.get("image_url")
 
                         if "tag_ids" in item_data:
-                            tags = (
-                                db.query(Tag)
-                                .filter(Tag.id.in_(item_data["tag_ids"]))
-                                .all()
-                            )
+                            tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
                             existing_conflict.tags = tags
                         elif "tags" in item_data:
                             tag_names = item_data["tags"]
@@ -344,4 +328,4 @@ async def import_data(
 
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}") from e

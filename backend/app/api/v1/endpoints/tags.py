@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
-from app.core.database import get_db
-from app.models import Tag, Item
-from app.schemas.item import TagResponse, TagCreate, TagUpdate
+
 from app.api.v1.endpoints.auth import get_current_user
+from app.core.database import get_db
+from app.models import Item, Tag
+from app.schemas.item import TagCreate, TagResponse, TagUpdate
 from app.services.tag_suggestion import TagSuggestionService
 
 router = APIRouter()
 
 
-@router.get("", response_model=List[TagResponse])
+@router.get("", response_model=list[TagResponse])
 async def get_tags(db: Session = Depends(get_db)):
     """
     Get all tags.
@@ -50,9 +50,7 @@ async def create_tag(
     # Auto-generate description if not provided
     tag_dict = tag_data.model_dump()
     if not tag_dict.get("description"):
-        tag_dict["description"] = TagSuggestionService.get_tag_description(
-            tag_data.name
-        )
+        tag_dict["description"] = TagSuggestionService.get_tag_description(tag_data.name)
 
     tag = Tag(**tag_dict)
     db.add(tag)
@@ -171,9 +169,7 @@ async def auto_generate_tags(
             # Assign color
             color = color_map.get(tag_name.lower(), "#3B82F6")
 
-            tag = Tag(
-                name=tag_name.title(), slug=slug, description=description, color=color
-            )
+            tag = Tag(name=tag_name.title(), slug=slug, description=description, color=color)
             db.add(tag)
             db.flush()  # Flush to get the tag ID
             existing_tags_dict[tag_name.lower()] = tag

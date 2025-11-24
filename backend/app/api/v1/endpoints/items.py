@@ -1,14 +1,15 @@
+from math import ceil
+
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from typing import Optional
+from sqlalchemy.orm import Session
+
+from app.api.v1.endpoints.auth import get_current_user
 from app.core.database import get_db
 from app.models import Item, Tag
-from app.schemas.item import ItemResponse, ItemCreate, ItemUpdate, ItemListResponse
-from app.api.v1.endpoints.auth import get_current_user
-from app.services.tag_suggestion import TagSuggestionService
+from app.schemas.item import ItemCreate, ItemListResponse, ItemResponse, ItemUpdate
 from app.services.drink_search import DrinkDatabaseService
-from math import ceil
+from app.services.tag_suggestion import TagSuggestionService
 
 router = APIRouter()
 
@@ -17,10 +18,10 @@ router = APIRouter()
 async def get_items(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    category_id: Optional[int] = None,
-    tag_ids: Optional[str] = None,  # Comma-separated tag IDs
-    origin: Optional[str] = None,
-    search: Optional[str] = None,
+    category_id: int | None = None,
+    tag_ids: str | None = None,  # Comma-separated tag IDs
+    origin: str | None = None,
+    search: str | None = None,
     sort_by: str = Query("name", regex="^(name|price|abv|created_at)$"),
     sort_order: str = Query("asc", regex="^(asc|desc)$"),
     published_only: bool = True,
@@ -34,7 +35,7 @@ async def get_items(
 
     # Filter by published status
     if published_only:
-        query = query.filter(Item.is_published == True)
+        query = query.filter(Item.is_published)
 
     # Filter by category
     if category_id:
@@ -185,9 +186,9 @@ async def delete_item(
 @router.post("/suggest-tags")
 async def suggest_tags(
     name: str = Query(...),
-    description: Optional[str] = None,
-    abv: Optional[float] = None,
-    origin: Optional[str] = None,
+    description: str | None = None,
+    abv: float | None = None,
+    origin: str | None = None,
     db: Session = Depends(get_db),
 ):
     """
