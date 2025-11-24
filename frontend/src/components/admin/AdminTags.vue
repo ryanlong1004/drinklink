@@ -22,14 +22,31 @@
       </div>
     </div>
 
-    <!-- Success message -->
-    <div v-if="autoGenMessage" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
-      <p class="text-green-800 font-medium">{{ autoGenMessage }}</p>
+    <!-- Success/Error message -->
+    <div v-if="autoGenMessage" :class="[
+      'mb-4 p-4 rounded-md',
+      autoGenMessage.startsWith('Error') || autoGenMessage.startsWith('Failed') 
+        ? 'bg-red-50 border border-red-200' 
+        : 'bg-green-50 border border-green-200'
+    ]">
+      <p :class="[
+        'font-medium',
+        autoGenMessage.startsWith('Error') || autoGenMessage.startsWith('Failed')
+          ? 'text-red-800'
+          : 'text-green-800'
+      ]">{{ autoGenMessage }}</p>
       <p v-if="autoGenDetails" class="text-sm text-green-700 mt-1">
         Created {{ autoGenDetails.created_tags?.length || 0 }} new tags • 
         Updated {{ autoGenDetails.items_updated || 0 }} items • 
         {{ autoGenDetails.already_existed }} already existed
       </p>
+      <button 
+        @click="autoGenMessage = ''; autoGenDetails = null" 
+        class="text-sm underline mt-2 opacity-70 hover:opacity-100"
+        :class="autoGenMessage.startsWith('Error') || autoGenMessage.startsWith('Failed') ? 'text-red-800' : 'text-green-800'"
+      >
+        Dismiss
+      </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -89,6 +106,8 @@ const handleAutoGenerate = async () => {
   
   try {
     const result = await adminStore.autoGenerateTags()
+    console.log('Auto-generate result:', result) // Debug log
+    
     if (result) {
       autoGenMessage.value = result.message
       autoGenDetails.value = result
@@ -96,12 +115,18 @@ const handleAutoGenerate = async () => {
       // Refresh items list since tags were assigned
       await adminStore.fetchAllItems()
       
-      // Clear message after 5 seconds
+      // Clear message after 15 seconds (increased from 5)
       setTimeout(() => {
         autoGenMessage.value = ''
         autoGenDetails.value = null
-      }, 5000)
+      }, 15000)
+    } else {
+      // Show error if no result
+      autoGenMessage.value = 'Failed to auto-generate tags. Check console for errors.'
     }
+  } catch (error) {
+    console.error('Auto-generate error:', error)
+    autoGenMessage.value = `Error: ${error.message}`
   } finally {
     autoGenerating.value = false
   }
