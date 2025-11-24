@@ -5,16 +5,8 @@
         <h3 class="text-xl font-bold">
           {{ isEditing ? 'Edit Item' : 'Create Item' }}
         </h3>
-        <button
-          class="text-gray-400 hover:text-gray-600"
-          @click="$emit('close')"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+        <button class="text-gray-400 hover:text-gray-600" @click="$emit('close')">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -25,10 +17,7 @@
         </button>
       </div>
 
-      <form
-        class="p-6 space-y-6"
-        @submit.prevent="handleSubmit"
-      >
+      <form class="p-6 space-y-6" @submit.prevent="handleSubmit">
         <!-- Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -41,7 +30,7 @@
             maxlength="100"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="e.g., Miller Lite Draft"
-          >
+          />
         </div>
 
         <!-- Description -->
@@ -73,14 +62,8 @@
               v-model="form.category_id"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option :value="null">
-                No category
-              </option>
-              <option
-                v-for="cat in categories"
-                :key="cat.id"
-                :value="cat.id"
-              >
+              <option :value="null">No category</option>
+              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                 {{ cat.name }}
               </option>
             </select>
@@ -100,7 +83,7 @@
                 required
                 class="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="0.00"
-              >
+              />
             </div>
           </div>
         </div>
@@ -117,7 +100,7 @@
               max="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., 5.0"
-            >
+            />
           </div>
 
           <div>
@@ -128,7 +111,7 @@
               maxlength="20"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., 16 oz"
-            >
+            />
           </div>
 
           <div>
@@ -138,7 +121,7 @@
               type="number"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="0"
-            >
+            />
           </div>
         </div>
 
@@ -152,7 +135,7 @@
               maxlength="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., California, USA"
-            >
+            />
           </div>
 
           <div>
@@ -163,7 +146,7 @@
               maxlength="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., Miller Brewing Company"
-            >
+            />
           </div>
         </div>
 
@@ -176,7 +159,7 @@
             maxlength="500"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="https://example.com/image.jpg"
-          >
+          />
         </div>
 
         <!-- Tags -->
@@ -191,7 +174,7 @@
                 'px-3 py-1 rounded-full text-sm font-medium transition-colors',
                 form.tag_ids.includes(tag.id)
                   ? 'text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
               ]"
               :style="form.tag_ids.includes(tag.id) ? { backgroundColor: tag.color } : {}"
               @click="toggleTag(tag.id)"
@@ -199,10 +182,7 @@
               {{ tag.name }}
             </button>
           </div>
-          <p
-            v-if="suggestedTagIds.length > 0"
-            class="text-xs text-gray-500 mt-2"
-          >
+          <p v-if="suggestedTagIds.length > 0" class="text-xs text-gray-500 mt-2">
             💡 Suggested: {{ suggestedTagIds.length }} tag(s) based on description
           </p>
         </div>
@@ -214,11 +194,8 @@
             v-model="form.is_published"
             type="checkbox"
             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-          >
-          <label
-            for="is_published"
-            class="ml-2 block text-sm text-gray-700"
-          >
+          />
+          <label for="is_published" class="ml-2 block text-sm text-gray-700">
             Publish immediately (visible to public)
           </label>
         </div>
@@ -237,7 +214,7 @@
             :disabled="submitting"
             class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
-            {{ submitting ? 'Saving...' : (isEditing ? 'Update Item' : 'Create Item') }}
+            {{ submitting ? 'Saving...' : isEditing ? 'Update Item' : 'Create Item' }}
           </button>
         </div>
       </form>
@@ -252,8 +229,8 @@ import { useAdminStore } from '../../stores/admin'
 const props = defineProps({
   item: {
     type: Object,
-    default: null
-  }
+    default: null,
+  },
 })
 
 const emit = defineEmits(['close', 'saved'])
@@ -281,7 +258,7 @@ const form = ref({
   is_published: true,
   sort_order: 0,
   image_url: '',
-  tag_ids: []
+  tag_ids: [],
 })
 
 // Populate form if editing
@@ -298,11 +275,11 @@ if (props.item) {
     is_published: props.item.is_published,
     sort_order: props.item.sort_order,
     image_url: props.item.image_url || '',
-    tag_ids: props.item.tags?.map(t => t.id) || []
+    tag_ids: props.item.tags?.map(t => t.id) || [],
   }
 }
 
-const toggleTag = (tagId) => {
+const toggleTag = tagId => {
   const index = form.value.tag_ids.indexOf(tagId)
   if (index > -1) {
     form.value.tag_ids.splice(index, 1)
@@ -313,22 +290,24 @@ const toggleTag = (tagId) => {
 
 const suggestTags = async () => {
   if (!form.value.name) return
-  
+
   suggestingTags.value = true
   try {
     const result = await adminStore.suggestTags({
       name: form.value.name,
       description: form.value.description || undefined,
       abv: form.value.abv || undefined,
-      origin: form.value.origin || undefined
+      origin: form.value.origin || undefined,
     })
-    
+
     // Add suggested tags that exist in the database
     if (result.existing_tags && result.existing_tags.length > 0) {
-      const newTagIds = result.existing_tags.map(t => t.id).filter(id => !form.value.tag_ids.includes(id))
+      const newTagIds = result.existing_tags
+        .map(t => t.id)
+        .filter(id => !form.value.tag_ids.includes(id))
       form.value.tag_ids.push(...newTagIds)
       suggestedTagIds.value = newTagIds
-      
+
       // Clear the suggestion highlight after a few seconds
       setTimeout(() => {
         suggestedTagIds.value = []
@@ -348,7 +327,7 @@ const handleSubmit = async () => {
     } else {
       success = await adminStore.createItem(form.value)
     }
-    
+
     if (success) {
       emit('saved')
       emit('close')

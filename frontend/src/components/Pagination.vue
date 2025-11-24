@@ -32,7 +32,7 @@
             ? 'bg-primary-600 text-white border-primary-600 shadow-md'
             : page === '...'
               ? 'border-transparent cursor-default'
-              : 'border-gray-300 hover:bg-gray-50 active:scale-95'
+              : 'border-gray-300 hover:bg-gray-50 active:scale-95',
         ]"
         @click="page !== '...' && menuStore.setPage(page)"
       >
@@ -80,11 +80,7 @@ const visiblePages = computed(() => {
   const delta = 2
 
   const range = []
-  for (
-    let i = Math.max(2, current - delta);
-    i <= Math.min(total - 1, current + delta);
-    i++
-  ) {
+  for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
     range.push(i)
   }
 

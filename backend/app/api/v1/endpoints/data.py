@@ -120,9 +120,7 @@ async def import_data(
 
         # Fix PostgreSQL sequence for categories table
         try:
-            db.execute(
-                "SELECT setval('categories_id_seq', " "(SELECT MAX(id) FROM categories), true)"
-            )
+            db.execute("SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories), true)")
             db.commit()
         except Exception:
             pass
@@ -155,7 +153,7 @@ async def import_data(
         # This prevents ID conflicts when auto-generating IDs
         try:
             db.execute(
-                "SELECT setval('items_id_seq', " "(SELECT COALESCE(MAX(id), 0) FROM items), true)"
+                "SELECT setval('items_id_seq', (SELECT COALESCE(MAX(id), 0) FROM items), true)"
             )
             db.commit()
         except Exception:

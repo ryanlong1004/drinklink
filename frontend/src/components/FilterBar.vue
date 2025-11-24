@@ -8,7 +8,7 @@
         placeholder="🔍 Search drinks..."
         class="w-full px-5 py-3 text-base font-semibold border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-600 pl-12 shadow-sm"
         @input="debouncedSearch"
-      >
+      />
       <svg
         class="absolute left-4 top-3.5 h-6 w-6 text-gray-500"
         fill="none"
@@ -26,16 +26,14 @@
 
     <!-- Categories - Horizontal scroll on mobile -->
     <div v-if="menuStore.categories.length > 0">
-      <h3 class="font-black text-lg mb-3 text-gray-900">
-        Categories
-      </h3>
+      <h3 class="font-black text-lg mb-3 text-gray-900">Categories</h3>
       <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
         <button
           :class="[
             'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2',
             menuStore.filters.categoryId === null
               ? 'bg-primary-600 text-white border-primary-700 shadow-md scale-105'
-              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95'
+              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95',
           ]"
           @click="menuStore.setFilter('categoryId', null)"
         >
@@ -48,37 +46,40 @@
             'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2 whitespace-nowrap',
             menuStore.filters.categoryId === category.id
               ? 'bg-primary-600 text-white border-primary-700 shadow-md scale-105'
-              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95'
+              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95',
           ]"
           @click="menuStore.setFilter('categoryId', category.id)"
         >
-          <span class="text-xl mr-1.5">{{ category.icon }}</span>{{ category.name }}
+          <span class="text-xl mr-1.5">{{ category.icon }}</span
+          >{{ category.name }}
         </button>
       </div>
     </div>
 
     <!-- Tags - Horizontal scroll on mobile -->
     <div v-if="menuStore.tags.length > 0">
-      <h3 class="font-black text-lg mb-3 text-gray-900">
-        Filter by Taste
-      </h3>
+      <h3 class="font-black text-lg mb-3 text-gray-900">Filter by Taste</h3>
       <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
         <button
           v-for="tag in menuStore.tags"
           :key="tag.id"
           :class="[
             'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2 whitespace-nowrap',
-            menuStore.filters.tagIds.includes(tag.id) ? 'shadow-md scale-105' : 'active:scale-95'
+            menuStore.filters.tagIds.includes(tag.id) ? 'shadow-md scale-105' : 'active:scale-95',
           ]"
-          :style="menuStore.filters.tagIds.includes(tag.id) ? {
-            backgroundColor: tag.color + '30',
-            borderColor: tag.color,
-            color: tag.color
-          } : {
-            backgroundColor: 'white',
-            borderColor: '#D1D5DB',
-            color: '#1F2937'
-          }"
+          :style="
+            menuStore.filters.tagIds.includes(tag.id)
+              ? {
+                  backgroundColor: tag.color + '30',
+                  borderColor: tag.color,
+                  color: tag.color,
+                }
+              : {
+                  backgroundColor: 'white',
+                  borderColor: '#D1D5DB',
+                  color: '#1F2937',
+                }
+          "
           @click="menuStore.toggleTag(tag.id)"
         >
           {{ tag.name }}
@@ -88,16 +89,14 @@
 
     <!-- Origins - Horizontal scroll on mobile -->
     <div v-if="menuStore.origins.length > 0">
-      <h3 class="font-black text-lg mb-3 text-gray-900">
-        Filter by Origin
-      </h3>
+      <h3 class="font-black text-lg mb-3 text-gray-900">Filter by Origin</h3>
       <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
         <button
           :class="[
             'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2',
             menuStore.filters.origin === null
               ? 'bg-primary-600 text-white border-primary-700 shadow-md scale-105'
-              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95'
+              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95',
           ]"
           @click="menuStore.setFilter('origin', null)"
         >
@@ -110,7 +109,7 @@
             'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2 whitespace-nowrap',
             menuStore.filters.origin === origin
               ? 'bg-primary-600 text-white border-primary-700 shadow-md scale-105'
-              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95'
+              : 'bg-white text-gray-800 border-gray-300 hover:border-primary-400 active:scale-95',
           ]"
           @click="menuStore.setFilter('origin', origin)"
         >
@@ -129,18 +128,10 @@
             class="w-full px-3 py-2.5 text-sm font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-600"
             @change="menuStore.fetchItems()"
           >
-            <option value="name">
-              Name
-            </option>
-            <option value="price">
-              Price
-            </option>
-            <option value="abv">
-              ABV
-            </option>
-            <option value="created_at">
-              Newest
-            </option>
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+            <option value="abv">ABV</option>
+            <option value="created_at">Newest</option>
           </select>
         </div>
 
@@ -165,10 +156,7 @@
     </div>
 
     <!-- Active Filters Summary -->
-    <div
-      v-if="hasActiveFilters"
-      class="text-center"
-    >
+    <div v-if="hasActiveFilters" class="text-center">
       <span
         class="inline-block bg-primary-100 text-primary-900 px-5 py-2 rounded-full text-sm font-bold border border-primary-300"
       >
