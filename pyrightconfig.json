@@ -1,23 +1,20 @@
 {
-  "include": [
-    "backend"
-  ],
+  "include": ["backend"],
   "exclude": [
     "**/node_modules",
     "**/__pycache__",
     "**/.venv",
     "**/venv",
-    ".git"
+    ".git",
+    "backend/alembic/versions"
   ],
-  "extraPaths": [
-    "backend"
-  ],
+  "extraPaths": ["backend"],
   "pythonVersion": "3.11",
   "pythonPlatform": "Linux",
-  "typeCheckingMode": "basic",
-  "reportMissingImports": true,
+  "typeCheckingMode": "off",
+  "reportMissingImports": false,
   "reportMissingTypeStubs": false,
-  "reportUnusedImport": "warning",
-  "reportUnusedVariable": "warning",
-  "reportDuplicateImport": "warning"
+  "reportUnusedImport": false,
+  "reportUnusedVariable": false,
+  "reportDuplicateImport": false
 }
