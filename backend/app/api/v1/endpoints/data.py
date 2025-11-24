@@ -229,6 +229,41 @@ async def import_data(
                     if category:
                         category_id = category.id
 
+                # Check if item already exists by name and category
+                existing_by_name = (
+                    db.query(Item)
+                    .filter(
+                        Item.name == item_data["name"], Item.category_id == category_id
+                    )
+                    .first()
+                )
+
+                if existing_by_name:
+                    # Update existing item instead of creating duplicate
+                    existing_by_name.description = item_data.get("description")
+                    existing_by_name.price = item_data.get("price", 0.0)
+                    existing_by_name.abv = item_data.get("abv")
+                    existing_by_name.volume = item_data.get("volume")
+                    existing_by_name.origin = item_data.get("origin")
+                    existing_by_name.producer = item_data.get("producer")
+                    existing_by_name.is_published = item_data.get("is_published", True)
+                    existing_by_name.sort_order = item_data.get("sort_order", 0)
+                    existing_by_name.image_url = item_data.get("image_url")
+
+                    # Update tags
+                    if "tag_ids" in item_data:
+                        tags = (
+                            db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        )
+                        existing_by_name.tags = tags
+                    elif "tags" in item_data:
+                        tag_names = item_data["tags"]
+                        tags = db.query(Tag).filter(Tag.name.in_(tag_names)).all()
+                        existing_by_name.tags = tags
+
+                    items_updated += 1
+                    continue
+
                 item = Item(
                     name=item_data["name"],
                     description=item_data.get("description"),

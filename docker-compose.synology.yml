@@ -20,7 +20,7 @@ services:
       - drinklink
 
   backend:
-    image: saltycatfish/drinklink-backend:v1.2.1
+    image: saltycatfish/drinklink-backend:v1.2.2
     container_name: drinklink-backend
     environment:
       DATABASE_URL: postgresql://drinklink:${POSTGRES_PASSWORD:-change_me_in_production}@db:5432/drinklink
