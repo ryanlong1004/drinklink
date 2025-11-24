@@ -13,7 +13,7 @@
     <!-- Categories - Horizontal scroll on mobile -->
     <div v-if="menuStore.categories.length > 0">
       <h3 class="font-black text-lg mb-3 text-gray-900">Categories</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
         <button @click="menuStore.setFilter('categoryId', null)" :class="[
           'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2',
           menuStore.filters.categoryId === null
@@ -37,7 +37,7 @@
     <!-- Tags - Horizontal scroll on mobile -->
     <div v-if="menuStore.tags.length > 0">
       <h3 class="font-black text-lg mb-3 text-gray-900">Filter by Taste</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
         <button v-for="tag in menuStore.tags" :key="tag.id" @click="menuStore.toggleTag(tag.id)" :class="[
           'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2 whitespace-nowrap',
           menuStore.filters.tagIds.includes(tag.id) ? 'shadow-md scale-105' : 'active:scale-95'
@@ -58,7 +58,7 @@
     <!-- Origins - Horizontal scroll on mobile -->
     <div v-if="menuStore.origins.length > 0">
       <h3 class="font-black text-lg mb-3 text-gray-900">Filter by Origin</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
         <button @click="menuStore.setFilter('origin', null)" :class="[
           'flex-shrink-0 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm border-2',
           menuStore.filters.origin === null
@@ -148,13 +148,28 @@ const hasActiveFilters = computed(() => {
 </script>
 
 <style scoped>
-/* Hide scrollbar for horizontal scroll on mobile */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Custom thin scrollbar styling for all screens */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
 </style>
