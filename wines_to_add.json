@@ -3,7 +3,7 @@
     {
       "name": "Sycamore Lane Pinot Grigio",
       "description": "White wine with crisp, refreshing flavor",
-      "price": 0.0,
+      "price": 8.99,
       "category": "Wine",
       "producer": "Sycamore Lane",
       "tags": ["White Wine", "Pinot Grigio"]
@@ -11,7 +11,7 @@
     {
       "name": "Sycamore Lane Cabernet Sauvignon",
       "description": "Full-bodied red wine with rich flavor",
-      "price": 0.0,
+      "price": 8.99,
       "category": "Wine",
       "producer": "Sycamore Lane",
       "tags": ["Red Wine", "Cabernet Sauvignon"]
@@ -19,7 +19,7 @@
     {
       "name": "Sycamore Lane Merlot",
       "description": "Smooth red wine with soft tannins",
-      "price": 0.0,
+      "price": 8.99,
       "category": "Wine",
       "producer": "Sycamore Lane",
       "tags": ["Red Wine", "Merlot"]
@@ -27,7 +27,7 @@
     {
       "name": "Federalist Cabernet",
       "description": "Bold Cabernet Sauvignon",
-      "price": 0.0,
+      "price": 12.99,
       "category": "Wine",
       "producer": "Federalist",
       "tags": ["Red Wine", "Cabernet Sauvignon"]
@@ -35,7 +35,7 @@
     {
       "name": "Quilty Cabernet",
       "description": "Premium Cabernet Sauvignon",
-      "price": 0.0,
+      "price": 14.99,
       "category": "Wine",
       "producer": "Quilty",
       "tags": ["Red Wine", "Cabernet Sauvignon"]
@@ -43,7 +43,7 @@
     {
       "name": "The Show Malbec",
       "description": "Argentinian Malbec with bold fruit flavors",
-      "price": 0.0,
+      "price": 11.99,
       "category": "Wine",
       "producer": "The Show",
       "tags": ["Red Wine", "Malbec"]

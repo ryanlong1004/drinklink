@@ -115,6 +115,16 @@ async def import_data(
 
         db.commit()
 
+        # Fix PostgreSQL sequence for categories table
+        try:
+            db.execute(
+                "SELECT setval('categories_id_seq', "
+                "(SELECT MAX(id) FROM categories), true)"
+            )
+            db.commit()
+        except Exception:
+            pass
+
         # Import tags
         tag_map = {}
         for tag_data in data.get("tags", []):
@@ -131,6 +141,13 @@ async def import_data(
                 tag_map[tag_data["id"]] = tag
 
         db.commit()
+
+        # Fix PostgreSQL sequence for tags table
+        try:
+            db.execute("SELECT setval('tags_id_seq', (SELECT MAX(id) FROM tags), true)")
+            db.commit()
+        except Exception:
+            pass
 
         # Import items
         items_imported = 0
@@ -153,12 +170,14 @@ async def import_data(
                     existing.is_published = item_data.get("is_published", True)
                     existing.sort_order = item_data.get("sort_order", 0)
                     existing.image_url = item_data.get("image_url")
-                    
+
                     # Update tags
                     if "tag_ids" in item_data:
-                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        tags = (
+                            db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        )
                         existing.tags = tags
-                    
+
                     items_updated += 1
                 else:
                     # Create new item with specified ID
@@ -179,7 +198,9 @@ async def import_data(
 
                     # Add tags
                     if "tag_ids" in item_data:
-                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        tags = (
+                            db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        )
                         item.tags = tags
 
                     db.add(item)
@@ -189,10 +210,14 @@ async def import_data(
                 # Resolve category by name if category_id not provided
                 category_id = item_data.get("category_id")
                 if not category_id and "category" in item_data:
-                    category = db.query(Category).filter(Category.name == item_data["category"]).first()
+                    category = (
+                        db.query(Category)
+                        .filter(Category.name == item_data["category"])
+                        .first()
+                    )
                     if category:
                         category_id = category.id
-                
+
                 item = Item(
                     name=item_data["name"],
                     description=item_data.get("description"),
@@ -221,6 +246,17 @@ async def import_data(
                 items_imported += 1
 
         db.commit()
+
+        # Fix PostgreSQL sequence for items table after import
+        # This ensures the next auto-generated ID doesn't conflict
+        try:
+            db.execute(
+                "SELECT setval('items_id_seq', (SELECT MAX(id) FROM items), true)"
+            )
+            db.commit()
+        except Exception:
+            # Ignore if sequence doesn't exist or other issues
+            pass
 
         return {
             "success": True,

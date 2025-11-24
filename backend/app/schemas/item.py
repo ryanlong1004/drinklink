@@ -66,7 +66,7 @@ class ItemBase(BaseModel):
     name: str = Field(..., max_length=100)
     description: Optional[str] = None
     category_id: Optional[int] = None
-    price: float = Field(..., gt=0)
+    price: float = Field(..., ge=0)
     abv: Optional[float] = Field(None, ge=0, le=100)
     volume: Optional[str] = Field(None, max_length=20)
     origin: Optional[str] = Field(None, max_length=100)
@@ -84,7 +84,7 @@ class ItemUpdate(BaseModel):
     name: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = None
     category_id: Optional[int] = None
-    price: Optional[float] = Field(None, gt=0)
+    price: Optional[float] = Field(None, ge=0)
     abv: Optional[float] = Field(None, ge=0, le=100)
     volume: Optional[str] = Field(None, max_length=20)
     origin: Optional[str] = Field(None, max_length=100)
