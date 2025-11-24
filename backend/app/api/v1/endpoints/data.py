@@ -4,7 +4,6 @@ from app.core.database import get_db
 from app.models import Category, Tag, Item
 from app.api.v1.endpoints.auth import get_current_user
 from typing import Dict, Any
-import json
 
 router = APIRouter()
 
@@ -135,15 +134,70 @@ async def import_data(
 
         # Import items
         items_imported = 0
+        items_updated = 0
         for item_data in data.get("items", []):
-            existing = db.query(Item).filter(Item.id == item_data["id"]).first()
-            if not existing:
+            # Check if item has an ID
+            if "id" in item_data and item_data["id"]:
+                # Update existing item or skip if not found
+                existing = db.query(Item).filter(Item.id == item_data["id"]).first()
+                if existing:
+                    # Update existing item
+                    existing.name = item_data["name"]
+                    existing.description = item_data.get("description")
+                    existing.category_id = item_data.get("category_id")
+                    existing.price = item_data["price"]
+                    existing.abv = item_data.get("abv")
+                    existing.volume = item_data.get("volume")
+                    existing.origin = item_data.get("origin")
+                    existing.producer = item_data.get("producer")
+                    existing.is_published = item_data.get("is_published", True)
+                    existing.sort_order = item_data.get("sort_order", 0)
+                    existing.image_url = item_data.get("image_url")
+                    
+                    # Update tags
+                    if "tag_ids" in item_data:
+                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        existing.tags = tags
+                    
+                    items_updated += 1
+                else:
+                    # Create new item with specified ID
+                    item = Item(
+                        id=item_data["id"],
+                        name=item_data["name"],
+                        description=item_data.get("description"),
+                        category_id=item_data.get("category_id"),
+                        price=item_data["price"],
+                        abv=item_data.get("abv"),
+                        volume=item_data.get("volume"),
+                        origin=item_data.get("origin"),
+                        producer=item_data.get("producer"),
+                        is_published=item_data.get("is_published", True),
+                        sort_order=item_data.get("sort_order", 0),
+                        image_url=item_data.get("image_url"),
+                    )
+
+                    # Add tags
+                    if "tag_ids" in item_data:
+                        tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                        item.tags = tags
+
+                    db.add(item)
+                    items_imported += 1
+            else:
+                # Create new item without ID (auto-generated)
+                # Resolve category by name if category_id not provided
+                category_id = item_data.get("category_id")
+                if not category_id and "category" in item_data:
+                    category = db.query(Category).filter(Category.name == item_data["category"]).first()
+                    if category:
+                        category_id = category.id
+                
                 item = Item(
-                    id=item_data["id"],
                     name=item_data["name"],
                     description=item_data.get("description"),
-                    category_id=item_data.get("category_id"),
-                    price=item_data["price"],
+                    category_id=category_id,
+                    price=item_data.get("price", 0.0),
                     abv=item_data.get("abv"),
                     volume=item_data.get("volume"),
                     origin=item_data.get("origin"),
@@ -153,9 +207,14 @@ async def import_data(
                     image_url=item_data.get("image_url"),
                 )
 
-                # Add tags
+                # Resolve tags by name if tag_ids not provided
                 if "tag_ids" in item_data:
                     tags = db.query(Tag).filter(Tag.id.in_(item_data["tag_ids"])).all()
+                    item.tags = tags
+                elif "tags" in item_data:
+                    # Look up tags by name
+                    tag_names = item_data["tags"]
+                    tags = db.query(Tag).filter(Tag.name.in_(tag_names)).all()
                     item.tags = tags
 
                 db.add(item)
@@ -169,6 +228,7 @@ async def import_data(
             "categories_imported": len(data.get("categories", [])),
             "tags_imported": len(data.get("tags", [])),
             "items_imported": items_imported,
+            "items_updated": items_updated,
         }
 
     except Exception as e:
