@@ -71,4 +71,4 @@ jobs:
       
       - name: Check Prettier formatting
         working-directory: ./frontend
-        run: npx prettier --check src/
+        run: npx prettier --config .prettierrc --check src/
