@@ -207,11 +207,6 @@ const generateSlug = () => {
   }
 }
 
-// Track when user manually edits the slug
-const handleSlugInput = () => {
-  slugManuallyEdited.value = true
-}
-
 const handleSubmit = async () => {
   submitting.value = true
   try {

@@ -1,9 +1,18 @@
+import hmac
+
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 
 from app.core.config import settings
-from app.core.security import create_access_token, verify_token
-from app.schemas.auth import LoginRequest, Token
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    verify_token,
+)
+from app.schemas.auth import LoginRequest, RefreshRequest, Token
 
 router = APIRouter()
 security = HTTPBearer()
@@ -13,15 +22,24 @@ security = HTTPBearer()
 async def login(login_data: LoginRequest):
     """
     Admin login endpoint.
-    Returns JWT token for authentication.
+    Returns JWT access and refresh tokens for authentication.
     """
-    # Simple admin authentication (in production, use proper user management)
-    if (
-        login_data.username == settings.ADMIN_USERNAME
-        and login_data.password == settings.ADMIN_PASSWORD
-    ):
+    # Use constant-time comparison to prevent timing attacks
+    username_match = hmac.compare_digest(
+        login_data.username.encode(), settings.ADMIN_USERNAME.encode()
+    )
+    password_match = hmac.compare_digest(
+        login_data.password.encode(), settings.ADMIN_PASSWORD.encode()
+    )
+
+    if username_match and password_match:
         access_token = create_access_token(data={"sub": login_data.username})
-        return {"access_token": access_token, "token_type": "bearer"}
+        refresh_token = create_refresh_token(data={"sub": login_data.username})
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+        }
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -30,7 +48,9 @@ async def login(login_data: LoginRequest):
     )
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     """
     Dependency to verify JWT token and get current user.
     Use this for protected admin endpoints.
@@ -54,6 +74,40 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         )
 
     return username
+
+
+@router.post("/refresh", response_model=Token)
+async def refresh(refresh_data: RefreshRequest):
+    """
+    Refresh access token using refresh token.
+    Returns new access and refresh tokens.
+    """
+    payload = verify_token(refresh_data.refresh_token, token_type="refresh")
+
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    username: str = payload.get("sub")
+    if username is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Create new tokens
+    access_token = create_access_token(data={"sub": username})
+    refresh_token = create_refresh_token(data={"sub": username})
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 @router.get("/verify")

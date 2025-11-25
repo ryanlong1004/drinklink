@@ -75,8 +75,10 @@
             : 'text-green-800'
         "
         @click="
-          autoGenMessage = ''
-          autoGenDetails = null
+          () => {
+            autoGenMessage = ''
+            autoGenDetails = null
+          }
         "
       >
         Dismiss
