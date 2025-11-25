@@ -55,15 +55,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          clean: true
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
       
-      - name: Install dependencies
+      - name: Clean install
         working-directory: ./frontend
-        run: npm ci
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
+          npm ci
       
       - name: Run ESLint
         working-directory: ./frontend
@@ -71,4 +76,4 @@ jobs:
       
       - name: Check Prettier formatting
         working-directory: ./frontend
-        run: npx prettier --config .prettierrc --check src/
+        run: npx prettier --check src/
