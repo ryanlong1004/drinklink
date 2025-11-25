@@ -5,8 +5,16 @@
         <h3 class="text-xl font-bold">
           {{ isEditing ? 'Edit Item' : 'Create Item' }}
         </h3>
-        <button class="text-gray-400 hover:text-gray-600" @click="$emit('close')">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          class="text-gray-400 hover:text-gray-600"
+          @click="$emit('close')"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -17,7 +25,10 @@
         </button>
       </div>
 
-      <form class="p-6 space-y-6" @submit.prevent="handleSubmit">
+      <form
+        class="p-6 space-y-6"
+        @submit.prevent="handleSubmit"
+      >
         <!-- Name -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -30,7 +41,7 @@
             maxlength="100"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="e.g., Miller Lite Draft"
-          />
+          >
         </div>
 
         <!-- Description -->
@@ -62,8 +73,14 @@
               v-model="form.category_id"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option :value="null">No category</option>
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+              <option :value="null">
+                No category
+              </option>
+              <option
+                v-for="cat in categories"
+                :key="cat.id"
+                :value="cat.id"
+              >
                 {{ cat.name }}
               </option>
             </select>
@@ -83,7 +100,7 @@
                 required
                 class="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 placeholder="0.00"
-              />
+              >
             </div>
           </div>
         </div>
@@ -100,7 +117,7 @@
               max="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., 5.0"
-            />
+            >
           </div>
 
           <div>
@@ -111,7 +128,7 @@
               maxlength="20"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., 16 oz"
-            />
+            >
           </div>
 
           <div>
@@ -121,7 +138,7 @@
               type="number"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="0"
-            />
+            >
           </div>
         </div>
 
@@ -135,7 +152,7 @@
               maxlength="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., California, USA"
-            />
+            >
           </div>
 
           <div>
@@ -146,7 +163,7 @@
               maxlength="100"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="e.g., Miller Brewing Company"
-            />
+            >
           </div>
         </div>
 
@@ -159,7 +176,7 @@
             maxlength="500"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             placeholder="https://example.com/image.jpg"
-          />
+          >
         </div>
 
         <!-- Tags -->
@@ -182,7 +199,10 @@
               {{ tag.name }}
             </button>
           </div>
-          <p v-if="suggestedTagIds.length > 0" class="text-xs text-gray-500 mt-2">
+          <p
+            v-if="suggestedTagIds.length > 0"
+            class="text-xs text-gray-500 mt-2"
+          >
             💡 Suggested: {{ suggestedTagIds.length }} tag(s) based on description
           </p>
         </div>
@@ -194,8 +214,11 @@
             v-model="form.is_published"
             type="checkbox"
             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-          />
-          <label for="is_published" class="ml-2 block text-sm text-gray-700">
+          >
+          <label
+            for="is_published"
+            class="ml-2 block text-sm text-gray-700"
+          >
             Publish immediately (visible to public)
           </label>
         </div>
@@ -223,7 +246,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useAdminStore } from '../../stores/admin'
 
 const props = defineProps({

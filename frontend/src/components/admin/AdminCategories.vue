@@ -1,12 +1,23 @@
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Categories</h2>
-      <button class="btn btn-primary" @click="showCreateModal = true">+ Add Category</button>
+      <h2 class="text-2xl font-bold">
+        Categories
+      </h2>
+      <button
+        class="btn btn-primary"
+        @click="showCreateModal = true"
+      >
+        + Add Category
+      </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="category in adminStore.categories" :key="category.id" class="card">
+      <div
+        v-for="category in adminStore.categories"
+        :key="category.id"
+        class="card"
+      >
         <div class="flex justify-between items-start mb-2">
           <h3 class="text-lg font-semibold">
             {{ category.name }}
@@ -28,7 +39,10 @@
           >
             Edit
           </button>
-          <button class="text-sm text-red-600 hover:text-red-900" @click="deleteCategory(category)">
+          <button
+            class="text-sm text-red-600 hover:text-red-900"
+            @click="deleteCategory(category)"
+          >
             Delete
           </button>
         </div>

@@ -4,10 +4,16 @@
     <header class="bg-white shadow-sm">
       <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-primary-600">DrinkLink Admin</h1>
+          <h1 class="text-2xl font-bold text-primary-600">
+            DrinkLink Admin
+          </h1>
         </div>
         <div class="flex items-center gap-4">
-          <button class="btn btn-primary" :disabled="exporting" @click="handleExport">
+          <button
+            class="btn btn-primary"
+            :disabled="exporting"
+            @click="handleExport"
+          >
             {{ exporting ? 'Exporting...' : 'Export Data' }}
           </button>
           <label class="btn btn-primary cursor-pointer">
@@ -17,11 +23,21 @@
               class="hidden"
               :disabled="importing"
               @change="handleImport"
-            />
+            >
             {{ importing ? 'Importing...' : 'Import Data' }}
           </label>
-          <router-link to="/" class="text-gray-600 hover:text-gray-900"> View Menu </router-link>
-          <button class="btn btn-secondary" @click="handleLogout">Logout</button>
+          <router-link
+            to="/"
+            class="text-gray-600 hover:text-gray-900"
+          >
+            View Menu
+          </router-link>
+          <button
+            class="btn btn-secondary"
+            @click="handleLogout"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </header>
