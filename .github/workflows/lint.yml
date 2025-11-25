@@ -74,6 +74,14 @@ jobs:
         working-directory: ./frontend
         run: npm run lint
       
+      - name: Debug - Show .prettierrc content
+        working-directory: ./frontend
+        run: |
+          echo "=== .prettierrc content ==="
+          cat .prettierrc
+          echo "=== First 20 lines of AdminCategories.vue ==="
+          head -20 src/components/admin/AdminCategories.vue
+      
       - name: Check Prettier formatting
         working-directory: ./frontend
         run: npx prettier --config .prettierrc --check src/
